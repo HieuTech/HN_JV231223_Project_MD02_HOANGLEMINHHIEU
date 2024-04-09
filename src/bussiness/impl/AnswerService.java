@@ -8,8 +8,8 @@ import java.util.List;
 
 public class AnswerService {
 
-    public static List<Answer> answerList;
-    static {
-        answerList = IOFile.readData(IOFile.ANSWER_PATH);
-    }
+//    public static List<Answer> answerList;
+//    static {
+//        answerList = IOFile.readData(IOFile.ANSWER_PATH);
+//    }
 }

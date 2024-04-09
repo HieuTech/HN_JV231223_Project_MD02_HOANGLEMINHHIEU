@@ -19,9 +19,10 @@ public class LoginMenu {
     private LoginMenu() {
     }
 
-    ;
+
     private static IAuthentication iAuthentication = new AuthenticationService();
     public static User user = IOFile.readPerData(IOFile.USER_LOGIN_PATH);
+
 
     public void displayLoginMenu() {
 

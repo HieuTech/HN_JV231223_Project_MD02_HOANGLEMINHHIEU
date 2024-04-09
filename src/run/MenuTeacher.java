@@ -1,6 +1,10 @@
 package run;
 
+import bussiness.design.ITeacher;
+import bussiness.entity.Exam;
 import bussiness.entity.RoleName;
+import bussiness.impl.ExamService;
+import bussiness.impl.TeacherService;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
@@ -18,6 +22,8 @@ public class MenuTeacher {
     private MenuTeacher() {
     }
 
+    private static ITeacher iTeacher = new TeacherService();
+
     public void displayMenuTeacher() {
         while (true) {
             System.out.println("Welcome to teacher page");
@@ -32,10 +38,16 @@ public class MenuTeacher {
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
             switch (choice) {
                 case 1:
-
+                    ExamService.examList.forEach(Exam::displayData);
+                    System.out.println("Do you want to see detail? | 1. YES  | 2. NO");
+                    byte choice1 = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+                    if (choice1 == 1) {
+                        iTeacher.seeDetailExam();
+                    }
                     break;
-                case 2:
 
+                case 2:
+                    iTeacher.addNewELement();
                     break;
                 case 3:
 
@@ -48,7 +60,7 @@ public class MenuTeacher {
                     break;
                 case 6:
                     LoginMenu.user = null;
-                    IOFile.writePerObject(IOFile.USER_LOGIN_PATH,LoginMenu.user);
+                    IOFile.writePerObject(IOFile.USER_LOGIN_PATH, LoginMenu.user);
                     return;
                 case 7:
 

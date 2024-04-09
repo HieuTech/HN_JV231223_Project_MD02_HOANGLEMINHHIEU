@@ -1,6 +1,11 @@
 package bussiness.entity;
 
+import utils.ErrorAndRegex;
+import utils.QuizConFig;
+
 import java.io.Serializable;
+import java.util.Comparator;
+import java.util.List;
 
 public class Answer implements Serializable {
 
@@ -8,15 +13,16 @@ public class Answer implements Serializable {
 
     private String answerContent;
 
-    private byte answerTrue;
+
+
 
     public Answer() {
     }
 
-    public Answer(int answerId, String answerContent, byte answerTrue) {
+    public Answer(int answerId, String answerContent) {
         this.answerId = answerId;
         this.answerContent = answerContent;
-        this.answerTrue = answerTrue;
+
     }
 
     public int getAnswerId() {
@@ -35,11 +41,34 @@ public class Answer implements Serializable {
         this.answerContent = answerContent;
     }
 
-    public byte getAnswerTrue() {
-        return answerTrue;
+
+
+
+    public void displayData(){
+        System.out.printf("| ID: %d | Content: %-20s \n", this.answerId, this.answerContent);
     }
 
-    public void setAnswerTrue(byte answerTrue) {
-        this.answerTrue = answerTrue;
+
+    public void inputData(boolean isAdd, List<Answer> answerList){
+        if(isAdd){
+            this.setAnswerId(getNewId(answerList));
+        }
+        System.out.println("Input Answer Content");
+        this.setAnswerContent(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE));
+
+        System.out.println("Input Answer Done");
+
+    }
+
+
+
+    public int getNewId(List<Answer> answerList){
+
+        int idMax = answerList.stream()
+                .map(Answer::getAnswerId)
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+        return idMax + 1;
+
     }
 }

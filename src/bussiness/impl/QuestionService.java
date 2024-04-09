@@ -6,8 +6,8 @@ import utils.IOFile;
 import java.util.List;
 
 public class QuestionService {
-    public static List<Question> questionList;
-    static {
-        questionList = IOFile.readData(IOFile.QUESTION_PATH);
-    }
+//    public static List<Question> questionList;
+//    static {
+//        questionList = IOFile.readData(IOFile.QUESTION_PATH);
+//    }
 }

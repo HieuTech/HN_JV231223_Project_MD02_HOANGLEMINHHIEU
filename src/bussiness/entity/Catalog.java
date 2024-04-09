@@ -52,12 +52,14 @@ public class Catalog implements Serializable {
         this.setCatalogName(getInputCatalogName());
         System.out.println("Input Catalog Description");
         this.setDescription(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING,ErrorAndRegex.ERROR_VALUE));
+        System.out.println("Input Catalog Done");
+
 
     }
 
     public String getInputCatalogName(){
         while (true){
-            String catalogName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_CATALOG_ID,ErrorAndRegex.ERROR_VALUE);
+            String catalogName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING,ErrorAndRegex.ERROR_VALUE);
             if(CatalogService.catalogList.stream().noneMatch(catalog -> catalog.getCatalogName().equals(catalogName))){
                 return catalogName;
             }

@@ -18,6 +18,7 @@ public class ErrorAndRegex {
     public static final String ERROR_VALUE= "Input invalid";
     public static final String ERROR_EMPTY = "Input Is Not Be Empty";
     public static final String ERROR_EXIST = "Value Is Exist";
+    public static final String ERROR_OUT_OF_RANGE = "Value Out Of Range";
 
     public static final String ERROR_NOT_FOUND = "Value Not Found";
 
