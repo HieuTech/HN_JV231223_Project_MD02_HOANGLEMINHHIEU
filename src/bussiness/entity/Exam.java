@@ -2,7 +2,7 @@ package bussiness.entity;
 
 import bussiness.impl.CatalogService;
 import bussiness.impl.ExamService;
-import bussiness.impl.Question;
+import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.QuizConFig;
 
@@ -16,10 +16,10 @@ import java.util.List;
 public class Exam implements Serializable  {
     private int examId, userId;
     private String description;
-    private List<Integer> catalogId;
+    private List<String> catalogId;
 
     private LocalDate  createAt;
-    private List<Integer> questionList;
+    private List<Question> questionList;
     private long duration;
 
     private boolean status;
@@ -27,7 +27,7 @@ public class Exam implements Serializable  {
     public Exam() {
     }
 
-    public Exam(int examId, int userId, String description, List<Integer> catalogId, LocalDate createAt, List<Integer> questionList, long duration, boolean status) {
+    public Exam(int examId, int userId, String description, List<String> catalogId, LocalDate createAt, List<Question> questionList, long duration, boolean status) {
         this.examId = examId;
         this.userId = userId;
         this.description = description;
@@ -64,13 +64,6 @@ public class Exam implements Serializable  {
 
 
 
-    public List<Integer> getCatalogId() {
-        return catalogId;
-    }
-
-    public void setCatalogId(List<Integer> catalogId) {
-        this.catalogId = catalogId;
-    }
 
     public LocalDate getCreateAt() {
         return createAt;
@@ -80,11 +73,19 @@ public class Exam implements Serializable  {
         this.createAt = createAt;
     }
 
-    public List<Integer> getQuestionList() {
+    public List<String> getCatalogId() {
+        return catalogId;
+    }
+
+    public void setCatalogId(List<String> catalogId) {
+        this.catalogId = catalogId;
+    }
+
+    public List<Question> getQuestionList() {
         return questionList;
     }
 
-    public void setQuestionList(List<Integer> questionList) {
+    public void setQuestionList(List<Question> questionList) {
         this.questionList = questionList;
     }
 
@@ -104,82 +105,87 @@ public class Exam implements Serializable  {
         this.status = status;
     }
 
-    public void inputData(boolean isAdd){
+    public void inputData(boolean isAdd ){
         if(isAdd){
             this.setExamId(getNewId());
         }
 
-        System.out.println("Input UserID");
-        this.setUserId(QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE));
-        this.setCatalogId(getInputCatalogId());
 
+        this.setUserId(LoginMenu.user.getUserId());
+        this.setCatalogId(getInputCatalogId());
         System.out.println("Input Description");
         this.setDescription(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING,ErrorAndRegex.ERROR_VALUE));
-        System.out.println("Input Duration");
-        this.setDuration(QuizConFig.getLong(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE));
+        getInputQuestion();
+//        System.out.println("Input Duration");
+//        this.setDuration(QuizConFig.getLong(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE));
         System.out.println("Input Create Date");
         this.setCreateAt(getInputCreateDate());
         System.out.println("Input status");
         this.setStatus(QuizConFig.getBoolean(ErrorAndRegex.REGEX_STATUS, ErrorAndRegex.ERROR_VALUE));
 
-
-//        System.out.println("Input FirstName");
-//        this.setFirstName(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
-//        System.out.println("Input LastName");
-//        this.setLastName(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
-//        System.out.println("Input Address");
-//        this.setAddress(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
-//        System.out.println("Input FirstName");
-//        this.setFirstName(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
     }
 
-//    public List<Integer> getInputQuestionId(){
-//        List<Integer> questionIdList = new ArrayList<>();
-//        while (true){
-//            System.out.println("List Of Questions");
-//            CatalogService.catalogList.forEach(Catalog::displayPerCatalog);
-//            System.out.println("How many catalogs you want to add");
-//            byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
-//            if (count > 0 && count < CatalogService.catalogList.size() ) {
-//                for (int i = 0; i < count; i++) {
-//                    System.out.println("Choose catalogId by index");
-//                    int catalogId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
-//                    if(CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogId))){
-//                        listCateId.add(catalogId);
-//                    }else{
-//                        System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
-//                    }
-//                }
-//
-//            }else{
-//                System.out.println("Quantity You Want To Add Out Of Range");
-//            }
-//            return listCateId;
-//        }
-//    }
+    public void getInputQuestion(){
+        while (true){
 
-    public List<Integer> getInputCatalogId(){
-        List<Integer> listCateId = new ArrayList<>();
+            System.out.println("How many Questions you want to add");
+            byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
+
+                for (int i = 0; i < count; i++) {
+                    Question question = new Question();
+                    System.out.printf("Question number %d \n ", i +1 );
+
+
+                }
+
+            }
+
+        }
+    }
+
+    public List<String> getInputCatalogId(){
+        List<String> listCateId = new ArrayList<>();
        while (true){
            System.out.println("List Of Categories");
            CatalogService.catalogList.forEach(Catalog::displayPerCatalog);
-           System.out.println("How many catalogs you want to add");
-           byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
-           if (count > 0 && count < CatalogService.catalogList.size() ) {
-               for (int i = 0; i < count; i++) {
-                   System.out.println("Choose catalogId by index");
-                   int catalogId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
-                   if(CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogId))){
-                       listCateId.add(catalogId);
-                   }else{
-                       System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
-                   }
-               }
+           System.out.println("You want to add more categories your select categories exist \n |1. Add more | 2. Choose Exits ");
 
+           byte select = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
+           if(select == 1){
+               System.out.println("How many catalog you want to add");
+               byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
+
+               for (int i = 0; i < count; i++) {
+                   Catalog catalog = new Catalog();
+                   catalog.inputData(true);
+                   CatalogService.catalogList.add(catalog);
+               }
+               System.out.println("Add Successfully");
+               break;
+
+           } else if(select == 2){
+               System.out.println("How many catalog you want to choose");
+               byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
+               if (count > 0 && count < CatalogService.catalogList.size() ) {
+                   for (int i = 0; i < count; i++) {
+                       System.out.println("Choose catalogId by index");
+                       String catalogId = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE);
+                       if(CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogId))){
+                           listCateId.add(catalogId);
+                       }else{
+                           System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
+                       }
+                   }
+               }else{
+                   System.out.println("Quantity You Want To Add Out Of Range");
+               }
+               return listCateId;
            }else{
-               System.out.println("Quantity You Want To Add Out Of Range");
+               System.out.println(ErrorAndRegex.ERROR_VALUE);
            }
-           return listCateId;
+
+
+
        }
     }
 

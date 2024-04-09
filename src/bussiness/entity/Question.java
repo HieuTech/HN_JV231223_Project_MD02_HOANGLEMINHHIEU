@@ -52,4 +52,8 @@ public class Question implements Serializable {
     public void setAnswerTrue(byte answerTrue) {
         this.answerTrue = answerTrue;
     }
+
+
+    public void inp
+
 }

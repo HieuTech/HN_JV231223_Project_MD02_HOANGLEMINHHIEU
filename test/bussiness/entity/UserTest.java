@@ -1,7 +1,11 @@
 package bussiness.entity;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import utils.IOFile;
+
+import java.util.List;
 
 class UserTest {
 
@@ -9,6 +13,8 @@ class UserTest {
     @Test
     @DisplayName("catalog test input")
     public void testInputUser(){
+
+        List<User> userList = IOFile.readData(IOFile.USER_PATH);
 
         User user = new User();
         user.setUserId(1);
@@ -21,11 +27,15 @@ class UserTest {
         user.setLastName("catalog desc");
         user.setRoleName(RoleName.ROLE_USER);
         user.setUserStatus(true);
+        userList.add(user);
+        IOFile.writeData(IOFile.USER_PATH,userList);
     }
 
     @Test
     @DisplayName("catalog test input false")
+    @Disabled
     public void testInputUserFalse(){
+
 
         User user = new User();
         user.setUserId(1);

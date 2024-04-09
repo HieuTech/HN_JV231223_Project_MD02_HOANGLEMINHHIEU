@@ -1,11 +1,10 @@
 package bussiness.design;
 
-public interface IGeneric <T, E>{
+public interface IGeneric <U, E, D>{
 
-    T findById(E id);
+    U findById(D id);
 
-    void addElement();
-
+    void addNewELement();
     void editElement();
     void deleteElement();
 

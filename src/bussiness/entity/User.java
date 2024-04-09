@@ -1,6 +1,7 @@
 package bussiness.entity;
 
 import bussiness.impl.UserService;
+import data.Env;
 import org.mindrot.jbcrypt.BCrypt;
 import utils.ErrorAndRegex;
 import utils.QuizConFig;
@@ -116,8 +117,9 @@ public class User implements Serializable {
     public void inputData(boolean isAdd) {
         if (isAdd) {
             this.setUserId(getNewId());
+            this.setRoleName(getInputRole());
+            this.setUserStatus(true);
         }
-        this.setRoleName(RoleName.ROLE_USER);
         System.out.println("Input UserName");
         this.setUserName(getInputUserName());
         System.out.println("Input email");
@@ -132,8 +134,24 @@ public class User implements Serializable {
         this.setLastName(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
         System.out.println("Input Address");
         this.setAddress(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
-        System.out.println("Input FirstName");
-        this.setFirstName(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
+    }
+
+    public RoleName getInputRole(){
+     while (true){
+         System.out.println("Your are Student Or Teacher?\n Please choose by index \n 1: Student 2: Teacher");
+         int option = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+
+         if(option == 1){
+             return RoleName.ROLE_USER;
+         } else if (option == 2) {
+             return RoleName.ROLE_TEACHER;
+         } else if (option == Env.getKeyAdmin()){
+             return RoleName.ROLE_ADMIN;
+         }else{
+             System.out.println(ErrorAndRegex.ERROR_VALUE);
+         }
+     }
+
     }
 
 
@@ -187,7 +205,6 @@ public class User implements Serializable {
     private int getNewId() {
         int idMax = UserService.userList.stream().map(User::getUserId).max(Comparator.naturalOrder()).orElse(0);
         return idMax + 1;
-
     }
 
 }

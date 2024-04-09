@@ -1,11 +1,11 @@
 package bussiness.impl;
 
-import bussiness.entity.Exam;
+import bussiness.entity.Question;
 import utils.IOFile;
 
 import java.util.List;
 
-public class Question {
+public class QuestionService {
     public static List<Question> questionList;
     static {
         questionList = IOFile.readData(IOFile.QUESTION_PATH);
