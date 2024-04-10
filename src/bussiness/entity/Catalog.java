@@ -6,17 +6,29 @@ import utils.ErrorAndRegex;
 import utils.QuizConFig;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Catalog implements Serializable {
     private String catalogId, catalogName, description;
 
+    private int examId;
+
+    public int getExamId() {
+        return examId;
+    }
+
+    public void setExamId(int examId) {
+        this.examId = examId;
+    }
+
     public Catalog() {
     }
 
-    public Catalog(String catalogId, String catalogName, String description) {
+    public Catalog(String catalogId, String catalogName, String description, int examId) {
         this.catalogId = catalogId;
         this.catalogName = catalogName;
         this.description = description;
+        this.examId = examId;
     }
 
     public String getCatalogId() {
@@ -43,18 +55,16 @@ public class Catalog implements Serializable {
         this.description = description;
     }
 
-    public void inputData(boolean isAdd) {
+    public void inputData(boolean isAdd, int examId) {
         if (isAdd) {
             System.out.println("Input Catalog ID");
             this.setCatalogId(getInputCatalogId());
+            this.setExamId(examId);
         }
         System.out.println("Input Catalog Name");
         this.setCatalogName(getInputCatalogName());
         System.out.println("Input Catalog Description");
         this.setDescription(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING,ErrorAndRegex.ERROR_VALUE));
-        System.out.println("Input Catalog Done");
-
-
     }
 
     public String getInputCatalogName(){
@@ -88,8 +98,11 @@ public class Catalog implements Serializable {
     }
 
     public void displayPerCatalog(){
-        System.out.printf("|ID: %-3s | Catalog Name: %-10s | Description : %5s ",
+        System.out.println("Catalog");
+        System.out.printf("|ID: %-3s | Catalog Name: %-10s | Description : %5s \n",
                 this.catalogId,this.catalogName,this.description
         );
+        System.out.println("-------------------------------------------------------------------");
+
     }
 }

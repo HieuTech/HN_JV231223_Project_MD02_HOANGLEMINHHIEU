@@ -50,10 +50,10 @@ public class MenuTeacher {
                     iTeacher.addNewELement();
                     break;
                 case 3:
-
+                    iTeacher.editElement();
                     break;
                 case 4:
-
+                    iTeacher.deleteElement();
                     break;
                 case 5:
 

@@ -23,6 +23,7 @@ public class ErrorAndRegex {
     public static final String ERROR_NOT_FOUND = "Value Not Found";
 
     public static final String NOTIFY_EMPTY= "List Is Empty";
+    public static final String NOTIFY_SUCCESS= "Successfully";
 
 
 }

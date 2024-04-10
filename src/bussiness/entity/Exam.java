@@ -2,6 +2,7 @@ package bussiness.entity;
 
 import bussiness.impl.CatalogService;
 import bussiness.impl.ExamService;
+import bussiness.impl.QuestionService;
 import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
@@ -17,23 +18,23 @@ import java.util.List;
 public class Exam implements Serializable {
     private int examId, userId;
     private String description;
-    private List<String> catalogId;
+    private List<Catalog> catalogList = CatalogService.catalogList;
 
     private LocalDate createAt;
-    private List<Question> questionList;
+    private List<Question> questionList = QuestionService.questionList;
     private long duration;
 
     private boolean status;
 
     public Exam() {
-        questionList = new ArrayList<>();
+
     }
 
-    public Exam(int examId, int userId, String description, List<String> catalogId, LocalDate createAt, List<Question> questionList, long duration, boolean status) {
+    public Exam(int examId, int userId, String description, List<Catalog> catalogList, LocalDate createAt, List<Question> questionList, long duration, boolean status) {
         this.examId = examId;
         this.userId = userId;
         this.description = description;
-        this.catalogId = catalogId;
+        this.catalogList = catalogList;
         this.createAt = createAt;
         this.questionList = questionList;
         this.duration = duration;
@@ -73,12 +74,12 @@ public class Exam implements Serializable {
         this.createAt = createAt;
     }
 
-    public List<String> getCatalogId() {
-        return catalogId;
+    public List<Catalog> getCatalogList() {
+        return catalogList;
     }
 
-    public void setCatalogId(List<String> catalogId) {
-        this.catalogId = catalogId;
+    public void setCatalogList(List<Catalog> catalogList) {
+        this.catalogList = catalogList;
     }
 
     public List<Question> getQuestionList() {
@@ -108,22 +109,25 @@ public class Exam implements Serializable {
     public void displayData() {
         System.out.printf("| ID: %s | Creator: %-4s | Desc: %-15s | Status: %-7s | Created_Date: %-10s \n", this.examId,
                 this.userId, this.description, this.status ? "PUBLISH" : "PRIVATE", this.createAt);
-        questionList.forEach(Question::displayData);
+        System.out.println("------------------------------------------------------------------------------------------------------");
+
 
     }
 
     public void inputData(boolean isAdd) {
         if (isAdd) {
             this.setExamId(getNewId());
+            this.setUserId(LoginMenu.user.getUserId());
+            this.setCatalogList(getInputCatalogList());
+            System.out.println("Input Exam Create Date");
+            this.setCreateAt(getInputCreateDate());
+            getInputQuestion();
         }
 
-        this.setUserId(LoginMenu.user.getUserId());
-        this.setCatalogId(getInputCatalogId());
         System.out.println("Input Exam Description");
         this.setDescription(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE));
-        getInputQuestion();
-        System.out.println("Input Exam Create Date");
-        this.setCreateAt(getInputCreateDate());
+        System.out.println("Input Exam Duration");
+        this.setDuration(QuizConFig.getLong(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE));
         System.out.println("Input Exam status");
         this.setStatus(QuizConFig.getBoolean(ErrorAndRegex.REGEX_STATUS, ErrorAndRegex.ERROR_VALUE));
         System.out.println("Input Exam done");
@@ -137,67 +141,80 @@ public class Exam implements Serializable {
         for (int i = 0; i < count; i++) {
             Question question = new Question();
             System.out.printf("Question number %d \n ", i + 1);
-            question.inputData(true, questionList);
+            question.inputData(true, this.examId);
             System.out.println("Add 1 question done");
+            QuestionService.questionList.add(question);
         }
-        IOFile.writeData(IOFile.EXAM_PATH,questionList);
+        this.questionList = QuestionService.questionList;
+        IOFile.writeData(IOFile.QUESTION_PATH, QuestionService.questionList);
 
     }
 
 
-    public List<String> getInputCatalogId() {
-        List<String> listCateId = new ArrayList<>();
+    public List<Catalog> getInputCatalogList() {
+
         while (true) {
-
-            System.out.println("List Of Categories");
-            CatalogService.catalogList.forEach(Catalog::displayPerCatalog);
-            System.out.println("You want to add more categories your select categories exist \n |1. Add more | 2. Choose Exits ");
-
-            byte select = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-            if (select == 1) {
+            if (CatalogService.catalogList.isEmpty()) {
+                System.out.println(ErrorAndRegex.NOTIFY_EMPTY);
                 System.out.println("How many catalog you want to add");
                 byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
 
                 for (int i = 0; i < count; i++) {
                     Catalog catalog = new Catalog();
-                    catalog.inputData(true);
+                    catalog.inputData(true, this.examId);
                     CatalogService.catalogList.add(catalog);
                 }
-                IOFile.writeData(IOFile.CATALOG_PATH,CatalogService.catalogList);
+                this.catalogList = CatalogService.catalogList;
+                IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+                return CatalogService.catalogList;
+            } else {
+                System.out.println("List Of Categories");
+                CatalogService.catalogList.forEach(Catalog::displayPerCatalog);
+                System.out.println("You want to add more categories your select categories exist \n |1. Add more | 2. Choose Exits ");
 
-                break;
-
-            } else if (select == 2) {
-                if (CatalogService.catalogList.isEmpty()) {
-                    System.out.println(ErrorAndRegex.NOTIFY_EMPTY);
-
-                } else {
-                    System.out.println("How many catalog you want to choose");
+                byte select = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+                if (select == 1) {
+                    System.out.println("How many catalog you want to add");
                     byte count = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-                    if (count > 0 && count < CatalogService.catalogList.size()) {
-                        for (int i = 0; i < count; i++) {
-                            System.out.println("Choose catalogId by index");
-                            String catalogId = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-                            if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogId))) {
-                                listCateId.add(catalogId);
-                                IOFile.writeData(IOFile.CATALOG_PATH,CatalogService.catalogList);
+
+                    for (int i = 0; i < count; i++) {
+                        Catalog catalog = new Catalog();
+                        catalog.inputData(true, this.examId);
+                        CatalogService.catalogList.add(catalog);
+                    }
+                    this.catalogList = CatalogService.catalogList;
+                    IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+                    return CatalogService.catalogList;
+
+                } else if (select == 2) {
+                    if (CatalogService.catalogList.isEmpty()) {
+                        System.out.println(ErrorAndRegex.NOTIFY_EMPTY);
+
+                    } else {
+                        while (true) {
+                            System.out.println("Choose catalogId");
+                            String catalogIdChoose = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
+                            if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogIdChoose))) {
+                                this.catalogList = CatalogService.catalogList;
+                                IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+
+                                return CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(catalogIdChoose)).toList();
                             } else {
                                 System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
                             }
                         }
-                    } else {
-                        System.out.println("Quantity You Want To Add Out Of Range");
                     }
+
+                } else {
+                    System.out.println(ErrorAndRegex.ERROR_VALUE);
+
                 }
-
-            } else {
-                System.out.println(ErrorAndRegex.ERROR_VALUE);
-
             }
 
         }
+    }
 
-        return listCateId;
+    private void checkCatalogIsExist() {
 
     }
 

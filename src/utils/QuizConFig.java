@@ -12,11 +12,25 @@ public class QuizConFig {
 
 
     public static byte getByte(String regex, String ERROR){
-        return Byte.parseByte(inputFromUser(regex, ERROR));
+        while (true){
+            try{
+                return Byte.parseByte(inputFromUser(regex, ERROR));
+
+            }catch (NumberFormatException e){
+                System.out.println(ErrorAndRegex.ERROR_VALUE);
+            }
+        }
     }
 
     public static int getInt(String regex, String ERROR){
-        return Integer.parseInt(inputFromUser(regex, ERROR));
+        while (true){
+            try{
+                return Integer.parseInt(inputFromUser(regex, ERROR));
+            }catch (NumberFormatException e){
+                System.out.println(ErrorAndRegex.ERROR_VALUE);
+            }
+        }
+
     }
 
     public static boolean getBoolean(String regex, String ERROR){
