@@ -30,7 +30,7 @@ public class MenuUser {
           System.out.println("6. Hiển thị lịch sử bài thi");
           System.out.println("6. Đồi mật khẩu");
           System.out.println("7. Đăng xuất");
-          System.out.println("8. Thoát");
+
           byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
           switch (choice) {
               case 1:
@@ -55,9 +55,7 @@ public class MenuUser {
                 LoginMenu.user = null;
                   IOFile.writePerObject(IOFile.USER_LOGIN_PATH,LoginMenu.user);
                   return;
-              case 8:
 
-                  break;
               default:
                   System.out.println("Your choice out of range");
                   break;

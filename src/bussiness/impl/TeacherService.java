@@ -19,6 +19,7 @@ public class TeacherService implements ITeacher {
         return UserService.userList.stream().filter(user -> user.getUserId() == id).findFirst().orElse(null);
     }
 
+
     @Override
     public void addNewELement() {
         System.out.println("Add New Exam");
@@ -36,7 +37,6 @@ public class TeacherService implements ITeacher {
         int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         Exam examUpdate = findExamById(examId);
         if (examUpdate != null) {
-            System.out.println("Catalog");
             CatalogService.catalogList.stream().filter(catalog -> catalog.getExamId() == examId).forEach(Catalog::displayPerCatalog);
             System.out.println("-------------------------------------------------------------------");
             QuestionService.questionList.stream().filter(question -> question.getExamId() == examId).forEach(Question::displayData);
@@ -45,6 +45,97 @@ public class TeacherService implements ITeacher {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
     }
+
+
+
+    @Override
+    public void startExam() {
+        ExamService.examList.forEach(Exam::displayData);
+        System.out.println("Input ExamId To Start");
+
+        int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+        Exam examStart = findExamById(examId);
+        if (examStart != null) {
+            List<Question> questions = QuestionService.questionList.stream().filter(question -> question.getExamId() == examStart.getExamId()).toList();
+            System.out.printf("--------------Exam %-5s ----------------- \n" +
+                            "--------------Student: %-5s  ----------------- \n" +
+                            "--------------DURATION: %-3s Minutes ----------------- \n", examStart.getDescription()
+                    , UserService.userList.stream().filter(user -> user.getUserId() == examStart.getUserId()).findFirst().orElse(null).getUserName(), examStart.getDuration());
+            Result result = new Result();
+            ResultDetail resultDetail = null;
+            byte totalPoint = 0;
+            for (int i = 0; i < questions.size(); i++) {
+                 resultDetail = new ResultDetail();
+                questions.get(i).showExamQuestion(i);
+                System.out.println("your choice  ");
+                int choice = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+                if (choice == questions.get(i).getAnswerTrue()) {
+                    totalPoint += 1;
+                    resultDetail.inputData(result.getResultId(),i, choice, true);
+                    ResultDetailService.resultDetailList.add(resultDetail);
+                }
+                resultDetail.inputData(result.getResultId(),i, choice, false);
+                ResultDetailService.resultDetailList.add(resultDetail);
+
+            }
+            if ((double) questions.size() / totalPoint >= 0.5) {
+                result.inputData(examStart.getUserId(), examId, totalPoint, true);
+
+            } else {
+                result.inputData(examStart.getUserId(), examId, totalPoint, false);
+
+            }
+
+            ResultService.resultList.add(result);
+            IOFile.writeData(IOFile.RESULT_PATH, ResultService.resultList);
+            System.out.println("Exam Done");
+            IOFile.writeData(IOFile.RESULT_DETAIL_PATH, ResultDetailService.resultDetailList);
+
+        } else {
+            System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public void seeResultExam() {
+        UserService.userList.stream().filter(user -> user.getRoleName().equals(RoleName.ROLE_TEACHER)).forEach(User::displayExamMember);
+        UserService.userList.stream().filter(user -> user.getRoleName().equals(RoleName.ROLE_USER)).forEach(User::displayExamMember);
+
+        System.out.println("Input UserId To See Exam Result");
+        int userId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+        User userSeeResult = findById(userId);
+        if (userSeeResult != null) {
+
+            ExamService.examList.stream().filter(exam -> exam.getUserId() == userId).forEach(Exam::displayData);
+            System.out.println("Input ExamId You Want To Review.");
+            int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+            Exam examWatch = findExamById(examId);
+            if (examWatch != null) {
+
+                ResultService.resultList.stream().filter(result -> result.getExamId() == examId).forEach(Result::displayData);
+                System.out.println("Do You Want To See Result Detail? | 1. YES | 2. NO");
+                byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+
+                if (choice == 1) {
+                  try{
+                      int resultId = ResultService.resultList.stream().filter(result -> result.getExamId() == examId).findFirst().orElse(null).getResultId();
+                      ResultDetailService.resultDetailList.stream().filter(resultDetail -> resultDetail.getResultId() == resultId).forEach(ResultDetail::displayData);
+                  }catch (NullPointerException e){
+                      System.out.println("User havent take this exam.");
+                  }
+                }
+            }
+        } else {
+            System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public void numericUserTakeExam() {
+        System.out.printf("Total Member Take Exam %s \n", ResultService.resultList.size());
+        ResultService.resultList.forEach(Result::displayData);
+    }
+
 
     @Override
     public void editElement() {
@@ -199,7 +290,7 @@ public class TeacherService implements ITeacher {
         Exam examDelete = findExamById(examId);
         if (examDelete != null) {
             ExamService.examList.remove(examDelete);
-            IOFile.writeData(IOFile.EXAM_PATH,ExamService.examList);
+            IOFile.writeData(IOFile.EXAM_PATH, ExamService.examList);
             System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);

@@ -194,11 +194,19 @@ public class User implements Serializable {
     }
 
     public void displayPerUser() {
-        System.out.printf("|ID: %-3s | userName: %-10s | Role : %5s " +
+        System.out.printf("%s|ID: %-3s | userName: %-10s | Role : %5s " +
                         "| First Name: %-6s | Last Name: %-6s | PhoneNumber: %-10s | Address: %-12s | Status: %-4s | email: %-10s " +
-                        "|  password: %-10s \n",
-                this.userId, this.userName, this.roleName, this.firstName, this.lastName, this.phoneNumber, this.address,
-                (this.userStatus ? "ACTIVE" : "INACTIVE"), this.email, this.password
+                        "|  password: %-10s %s\n",
+               ErrorAndRegex.ANSI_YELLOW, this.userId, this.userName, this.roleName, this.firstName, this.lastName, this.phoneNumber, this.address,
+                (this.userStatus ? "ACTIVE" : "INACTIVE"), this.email, this.password, ErrorAndRegex.ANSI_RESET
+        );
+    }
+    public void displayExamMember() {
+        System.out.printf("%s|ID: %-3s | userName: %-10s "+
+                        "| First Name: %-6s | Last Name: %-6s | email: %-10s %s \n"
+                        ,
+                ErrorAndRegex.ANSI_YELLOW,this.userId, this.userName, this.firstName, this.lastName
+                , this.email,ErrorAndRegex.ANSI_RESET
         );
     }
 

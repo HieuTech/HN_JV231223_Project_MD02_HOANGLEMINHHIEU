@@ -99,8 +99,8 @@ public class Catalog implements Serializable {
 
     public void displayPerCatalog(){
         System.out.println("Catalog");
-        System.out.printf("|ID: %-3s | Catalog Name: %-10s | Description : %5s \n",
-                this.catalogId,this.catalogName,this.description
+        System.out.printf("%s|ID: %-3s | Catalog Name: %-10s | Description : %5s %s\n",
+               ErrorAndRegex.ANSI_YELLOW, this.catalogId,this.catalogName,this.description,ErrorAndRegex.ANSI_RESET
         );
         System.out.println("-------------------------------------------------------------------");
 

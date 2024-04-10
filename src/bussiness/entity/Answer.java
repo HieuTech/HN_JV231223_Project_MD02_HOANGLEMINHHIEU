@@ -54,7 +54,8 @@ public class Answer implements Serializable {
 
 
     public void displayData(){
-        System.out.printf("| ID: %d | Answer Content: %-20s \n", this.answerId, this.answerContent);
+        System.out.printf("%s| ID: %d | Answer Content: %-20s %s \n",ErrorAndRegex.ANSI_GREEN, this.answerId, this.answerContent
+        ,ErrorAndRegex.ANSI_RESET);
     }
 
 

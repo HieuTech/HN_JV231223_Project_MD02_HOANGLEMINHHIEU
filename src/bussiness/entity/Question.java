@@ -78,13 +78,22 @@ public class Question implements Serializable {
 
     public void displayData() {
         System.out.println("Question");
-        System.out.printf("| ID: %d | Question Content: %-20s \n | Right Answer: %-3s \n", this.questionId, this.questionContent, this.answerTrue);
+        System.out.printf("%s| ID: %d | Question Content: %-20s \n | Right Answer: %-3s %s\n", ErrorAndRegex.ANSI_BLUE, this.questionId, this.questionContent, this.answerTrue,ErrorAndRegex.ANSI_RESET);
         System.out.println("Answer");
         AnswerService.answerList.stream().filter(answer -> answer.getQuestionId() == this.questionId).forEach(Answer::displayData);
         System.out.println("-------------------------------------------------------------------");
     }
 
+    public void showExamQuestion(int index) {
+        System.out.printf("Question number %d \n | Question Content: %-20s | \n Answer \n", index + 1, this.questionContent);
+        AnswerService.answerList.stream().filter(answer -> answer.getQuestionId() == this.questionId).forEach(Answer::displayData);
+        System.out.println("-------------------------------------------------------------------");
+    }
+
+
     public void inputData(boolean isAdd, int examId) {
+        System.out.println("Input Question Content");
+        this.setQuestionContent(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE));
         if (isAdd) {
             this.setQuestionId(getNewId());
             this.setExamId(examId);
@@ -92,8 +101,7 @@ public class Question implements Serializable {
             getInputAnswerList(this.questionId);
             getInputAnswerTrue();
         }
-        System.out.println("Input Question Content");
-        this.setQuestionContent(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE));
+
 
         System.out.println("Input Question Done");
 

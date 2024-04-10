@@ -32,17 +32,23 @@ public class MenuTeacher {
             System.out.println("3. Chỉnh sửa đề thi");
             System.out.println("4. Xóa đề thi");
             System.out.println("5. Thống kê kết quả thi của người dự thi");
-            System.out.println("6. Đăng xuất");
+            System.out.println("6. Bắt đầu làm bài thi");
+            System.out.println("7. Xem kết quả làm bài thi");
+            System.out.println("8. Đăng xuất");
 
 
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
             switch (choice) {
                 case 1:
-                    ExamService.examList.forEach(Exam::displayData);
-                    System.out.println("Do you want to see detail? | 1. YES  | 2. NO");
-                    byte choice1 = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-                    if (choice1 == 1) {
-                        iTeacher.seeDetailExam();
+                    if (ExamService.examList.isEmpty()) {
+                        System.out.println("Exam List Is Empty");
+                    } else {
+                        ExamService.examList.forEach(Exam::displayData);
+                        System.out.println("Do you want to see detail? | 1. YES  | 2. NO");
+                        byte choice1 = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+                        if (choice1 == 1) {
+                            iTeacher.seeDetailExam();
+                        }
                     }
                     break;
 
@@ -56,18 +62,18 @@ public class MenuTeacher {
                     iTeacher.deleteElement();
                     break;
                 case 5:
-
+                    iTeacher.numericUserTakeExam();
                     break;
                 case 6:
+                    iTeacher.startExam();
+                    break;
+                case 7:
+                    iTeacher.seeResultExam();
+                    break;
+                case 8:
                     LoginMenu.user = null;
                     IOFile.writePerObject(IOFile.USER_LOGIN_PATH, LoginMenu.user);
                     return;
-                case 7:
-
-                    break;
-                case 8:
-
-                    break;
                 default:
                     System.out.println("Your choice out of range");
                     break;

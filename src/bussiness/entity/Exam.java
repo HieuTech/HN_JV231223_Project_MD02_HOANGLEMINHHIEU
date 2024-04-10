@@ -107,8 +107,9 @@ public class Exam implements Serializable {
     }
 
     public void displayData() {
-        System.out.printf("| ID: %s | Creator: %-4s | Desc: %-15s | Status: %-7s | Created_Date: %-10s \n", this.examId,
-                this.userId, this.description, this.status ? "PUBLISH" : "PRIVATE", this.createAt);
+        System.out.println("---------------------EXAM__INFO------------------------ ");
+        System.out.printf("%s| ID: %s | Creator: %-4s | Desc: %-15s | Status: %-7s | Created_Date: %-10s %s \n",ErrorAndRegex.ANSI_CYAN, this.examId,
+                this.userId, this.description, this.status ? "PUBLISH" : "PRIVATE", this.createAt, ErrorAndRegex.ANSI_RESET);
         System.out.println("------------------------------------------------------------------------------------------------------");
 
 
@@ -119,8 +120,7 @@ public class Exam implements Serializable {
             this.setExamId(getNewId());
             this.setUserId(LoginMenu.user.getUserId());
             this.setCatalogList(getInputCatalogList());
-            System.out.println("Input Exam Create Date");
-            this.setCreateAt(getInputCreateDate());
+            getInputCreateDate();
             getInputQuestion();
         }
 
@@ -193,7 +193,7 @@ public class Exam implements Serializable {
                     } else {
                         while (true) {
                             System.out.println("Choose catalogId");
-                            String catalogIdChoose = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
+                            String catalogIdChoose = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_CATALOG_ID, ErrorAndRegex.ERROR_VALUE);
                             if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogIdChoose))) {
                                 this.catalogList = CatalogService.catalogList;
                                 IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
@@ -218,15 +218,15 @@ public class Exam implements Serializable {
 
     }
 
-    public LocalDate getInputCreateDate() {
-        while (true) {
-            String createdDate = QuizConFig.scanner.nextLine();
-            try {
-                return LocalDate.parse(createdDate, QuizConFig.DTF);
-            } catch (DateTimeParseException e) {
-                System.out.println(ErrorAndRegex.ERROR_LOCALDATE);
-            }
-        }
+    public void getInputCreateDate() {
+
+
+        LocalDate localDate = LocalDate.now();
+        String formattedDate = localDate.format(QuizConFig.DTF);
+
+// Sử dụng cùng định dạng khi phân tích cú pháp
+        LocalDate parsedDate = LocalDate.parse(formattedDate, QuizConFig.DTF);
+        this.setCreateAt(parsedDate);
     }
 
     public int getNewId() {

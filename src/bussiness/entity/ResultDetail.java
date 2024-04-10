@@ -1,14 +1,19 @@
 package bussiness.entity;
 
-public class ResultDetail {
+import bussiness.impl.UserService;
+import utils.ErrorAndRegex;
+
+import java.io.Serializable;
+
+public class ResultDetail implements Serializable {
     private int resultId;
-    private byte indexQuestion, indexChoice;
+    private int indexQuestion, indexChoice;
     private boolean check;
 
     public ResultDetail() {
     }
 
-    public ResultDetail(int resultId, byte indexQuestion, byte indexChoice, boolean check) {
+    public ResultDetail(int resultId, byte indexQuestion, int indexChoice, boolean check) {
         this.resultId = resultId;
         this.indexQuestion = indexQuestion;
         this.indexChoice = indexChoice;
@@ -23,19 +28,19 @@ public class ResultDetail {
         this.resultId = resultId;
     }
 
-    public byte getIndexQuestion() {
+    public int getIndexQuestion() {
         return indexQuestion;
     }
 
-    public void setIndexQuestion(byte indexQuestion) {
+    public void setIndexQuestion(int indexQuestion) {
         this.indexQuestion = indexQuestion;
     }
 
-    public byte getIndexChoice() {
+    public int getIndexChoice() {
         return indexChoice;
     }
 
-    public void setIndexChoice(byte indexChoice) {
+    public void setIndexChoice(int indexChoice) {
         this.indexChoice = indexChoice;
     }
 
@@ -45,5 +50,20 @@ public class ResultDetail {
 
     public void setCheck(boolean check) {
         this.check = check;
+    }
+
+    public void inputData(int resultId, int indexQuestion, int choice, boolean check) {
+        this.setResultId(resultId);
+        this.setIndexQuestion(indexQuestion);
+        this.setIndexChoice(choice);
+        this.setCheck(check);
+    }
+
+    public void displayData() {
+        System.out.println("---------------------RESULT_DETAIL------------------------ ");
+        System.out.printf("%s| ID: %s | Index Question: %s | Index Choice: %s | Check: %-4s |  %s\n",
+                ErrorAndRegex.ANSI_GREEN, this.resultId, this.indexQuestion,
+                this.indexChoice, this.check ? "Correct" : "Incorrect", ErrorAndRegex.ANSI_RESET);
+        System.out.println("------------------------------------------------------------------------------------------------------");
     }
 }

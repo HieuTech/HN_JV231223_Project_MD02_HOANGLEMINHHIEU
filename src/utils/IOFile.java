@@ -13,6 +13,7 @@ public class IOFile {
     public static final String RESULT_PATH = "src/data/result.txt";
     public static final String CATALOG_PATH = "src/data/catalog.txt";
     public static final String USER_LOGIN_PATH = "src/data/userLogin.txt";
+    public static final String RESULT_DETAIL_PATH = "src/data/resultDetail.txt";
 
 
     public static <T> void writeData(String path, List<T> list){
@@ -23,7 +24,6 @@ public class IOFile {
             fos = new FileOutputStream(path);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(list);
-            System.out.println("Write successfully");
         }catch (IOException e) {
 
         }finally {
