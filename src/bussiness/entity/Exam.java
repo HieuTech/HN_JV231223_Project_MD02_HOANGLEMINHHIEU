@@ -108,7 +108,7 @@ public class Exam implements Serializable {
 
     public void displayData() {
         System.out.println("---------------------EXAM__INFO------------------------ ");
-        System.out.printf("%s| ID: %s | Creator: %-4s | Desc: %-15s | Status: %-7s | Created_Date: %-10s %s \n",ErrorAndRegex.ANSI_CYAN, this.examId,
+        System.out.printf("%s| ID: %s | Creator: %-4s | Desc: %-15s | Status: %-7s | Created_Date: %-10s %s \n", ErrorAndRegex.ANSI_CYAN, this.examId,
                 this.userId, this.description, this.status ? "PUBLISH" : "PRIVATE", this.createAt, ErrorAndRegex.ANSI_RESET);
         System.out.println("------------------------------------------------------------------------------------------------------");
 
@@ -119,7 +119,7 @@ public class Exam implements Serializable {
         if (isAdd) {
             this.setExamId(getNewId());
             this.setUserId(LoginMenu.user.getUserId());
-            this.setCatalogList(getInputCatalogList());
+            getInputCatalogList();
             getInputCreateDate();
             getInputQuestion();
         }
@@ -127,7 +127,7 @@ public class Exam implements Serializable {
         System.out.println("Input Exam Description");
         this.setDescription(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE));
         System.out.println("Input Exam Duration");
-        this.setDuration(QuizConFig.getLong(ErrorAndRegex.REGEX_NUMBER,ErrorAndRegex.ERROR_VALUE));
+        this.setDuration(QuizConFig.getLong(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE));
         System.out.println("Input Exam status");
         this.setStatus(QuizConFig.getBoolean(ErrorAndRegex.REGEX_STATUS, ErrorAndRegex.ERROR_VALUE));
         System.out.println("Input Exam done");
@@ -151,7 +151,7 @@ public class Exam implements Serializable {
     }
 
 
-    public List<Catalog> getInputCatalogList() {
+    public void getInputCatalogList() {
 
         while (true) {
             if (CatalogService.catalogList.isEmpty()) {
@@ -166,7 +166,8 @@ public class Exam implements Serializable {
                 }
                 this.catalogList = CatalogService.catalogList;
                 IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
-                return CatalogService.catalogList;
+                break;
+//                return CatalogService.catalogList;
             } else {
                 System.out.println("List Of Categories");
                 CatalogService.catalogList.forEach(Catalog::displayPerCatalog);
@@ -184,26 +185,21 @@ public class Exam implements Serializable {
                     }
                     this.catalogList = CatalogService.catalogList;
                     IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
-                    return CatalogService.catalogList;
-
+//                    return CatalogService.catalogList;
                 } else if (select == 2) {
-                    if (CatalogService.catalogList.isEmpty()) {
-                        System.out.println(ErrorAndRegex.NOTIFY_EMPTY);
-
-                    } else {
-                        while (true) {
-                            System.out.println("Choose catalogId");
-                            String catalogIdChoose = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_CATALOG_ID, ErrorAndRegex.ERROR_VALUE);
-                            if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogIdChoose))) {
-                                this.catalogList = CatalogService.catalogList;
-                                IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
-
-                                return CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(catalogIdChoose)).toList();
-                            } else {
-                                System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
-                            }
+                    while (true) {
+                        System.out.println("Choose catalogId");
+                        String catalogIdChoose = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_CATALOG_ID, ErrorAndRegex.ERROR_VALUE);
+                        if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogIdChoose))) {
+                            this.catalogList = CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(catalogIdChoose)).toList();
+//                                IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+                            return;
+//                                return CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(catalogIdChoose)).toList();
+                        } else {
+                            System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
                         }
                     }
+
 
                 } else {
                     System.out.println(ErrorAndRegex.ERROR_VALUE);
@@ -214,17 +210,9 @@ public class Exam implements Serializable {
         }
     }
 
-    private void checkCatalogIsExist() {
-
-    }
-
     public void getInputCreateDate() {
-
-
         LocalDate localDate = LocalDate.now();
         String formattedDate = localDate.format(QuizConFig.DTF);
-
-// Sử dụng cùng định dạng khi phân tích cú pháp
         LocalDate parsedDate = LocalDate.parse(formattedDate, QuizConFig.DTF);
         this.setCreateAt(parsedDate);
     }

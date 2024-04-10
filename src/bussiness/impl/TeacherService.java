@@ -73,9 +73,11 @@ public class TeacherService implements ITeacher {
                     totalPoint += 1;
                     resultDetail.inputData(result.getResultId(),i, choice, true);
                     ResultDetailService.resultDetailList.add(resultDetail);
+                }else{
+                    resultDetail.inputData(result.getResultId(),i, choice, false);
+                    ResultDetailService.resultDetailList.add(resultDetail);
                 }
-                resultDetail.inputData(result.getResultId(),i, choice, false);
-                ResultDetailService.resultDetailList.add(resultDetail);
+
 
             }
             if ((double) questions.size() / totalPoint >= 0.5) {
@@ -87,6 +89,7 @@ public class TeacherService implements ITeacher {
             }
 
             ResultService.resultList.add(result);
+            IOFile.writeData(IOFile.QUESTION_PATH, QuestionService.questionList);
             IOFile.writeData(IOFile.RESULT_PATH, ResultService.resultList);
             System.out.println("Exam Done");
             IOFile.writeData(IOFile.RESULT_DETAIL_PATH, ResultDetailService.resultDetailList);
@@ -119,7 +122,8 @@ public class TeacherService implements ITeacher {
                 if (choice == 1) {
                   try{
                       int resultId = ResultService.resultList.stream().filter(result -> result.getExamId() == examId).findFirst().orElse(null).getResultId();
-                      ResultDetailService.resultDetailList.stream().filter(resultDetail -> resultDetail.getResultId() == resultId).forEach(ResultDetail::displayData);
+//
+               ResultDetailService.resultDetailList.stream().filter(resultDetail -> resultDetail.getResultId() == resultId).forEach(ResultDetail::displayData);
                   }catch (NullPointerException e){
                       System.out.println("User havent take this exam.");
                   }
@@ -132,7 +136,7 @@ public class TeacherService implements ITeacher {
 
     @Override
     public void numericUserTakeExam() {
-        System.out.printf("Total Member Take Exam %s \n", ResultService.resultList.size());
+        System.out.printf("Total Member Take Exam: %s \n", ResultService.resultList.size());
         ResultService.resultList.forEach(Result::displayData);
     }
 
