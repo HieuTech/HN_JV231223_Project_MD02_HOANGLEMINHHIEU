@@ -3,6 +3,7 @@ package bussiness.impl;
 
 import bussiness.design.ITeacher;
 import bussiness.entity.*;
+import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
@@ -47,7 +48,6 @@ public class TeacherService implements ITeacher {
     }
 
 
-
     @Override
     public void startExam() {
         ExamService.examList.forEach(Exam::displayData);
@@ -63,76 +63,33 @@ public class TeacherService implements ITeacher {
                     , UserService.userList.stream().filter(user -> user.getUserId() == examStart.getUserId()).findFirst().orElse(null).getUserName(), examStart.getDuration());
             Result result = new Result();
             ResultDetail resultDetail = null;
+            List<ResultDetail> resultDetailList = new ArrayList<>();
             byte totalPoint = 0;
             for (int i = 0; i < questions.size(); i++) {
-                 resultDetail = new ResultDetail();
+                resultDetail = new ResultDetail();
                 questions.get(i).showExamQuestion(i);
                 System.out.println("your choice  ");
                 int choice = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
                 if (choice == questions.get(i).getAnswerTrue()) {
                     totalPoint += 1;
-                    resultDetail.inputData(result.getResultId(),i, choice, true);
-                    ResultDetailService.resultDetailList.add(resultDetail);
-                }else{
-                    resultDetail.inputData(result.getResultId(),i, choice, false);
-                    ResultDetailService.resultDetailList.add(resultDetail);
+                    resultDetail.inputData(result.getResultId(), i, choice, true);
+                    resultDetailList.add(resultDetail);
+                } else {
+                    resultDetail.inputData(result.getResultId(), i, choice, false);
+                    resultDetailList.add(resultDetail);
                 }
 
 
             }
-            if ((double) questions.size() / totalPoint >= 0.5) {
-                result.inputData(examStart.getUserId(), examId, totalPoint, true);
-
-            } else {
-                result.inputData(examStart.getUserId(), examId, totalPoint, false);
-
-            }
-
-            ResultService.resultList.add(result);
-            IOFile.writeData(IOFile.QUESTION_PATH, QuestionService.questionList);
-            IOFile.writeData(IOFile.RESULT_PATH, ResultService.resultList);
-            System.out.println("Exam Done");
-            IOFile.writeData(IOFile.RESULT_DETAIL_PATH, ResultDetailService.resultDetailList);
-
+            result.inputData(examStart.getUserId(), examId, totalPoint, (double) questions.size() / totalPoint >= 0.5);
+            result.displayData();
+            resultDetailList.forEach(ResultDetail::displayData);
+            System.out.println("---------------TEST__EXAM__DONE---------------------");
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
     }
 
-    @Override
-    public void seeResultExam() {
-        UserService.userList.stream().filter(user -> user.getRoleName().equals(RoleName.ROLE_TEACHER)).forEach(User::displayExamMember);
-        UserService.userList.stream().filter(user -> user.getRoleName().equals(RoleName.ROLE_USER)).forEach(User::displayExamMember);
-
-        System.out.println("Input UserId To See Exam Result");
-        int userId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-        User userSeeResult = findById(userId);
-        if (userSeeResult != null) {
-
-            ExamService.examList.stream().filter(exam -> exam.getUserId() == userId).forEach(Exam::displayData);
-            System.out.println("Input ExamId You Want To Review.");
-            int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-            Exam examWatch = findExamById(examId);
-            if (examWatch != null) {
-
-                ResultService.resultList.stream().filter(result -> result.getExamId() == examId).forEach(Result::displayData);
-                System.out.println("Do You Want To See Result Detail? | 1. YES | 2. NO");
-                byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-
-                if (choice == 1) {
-                  try{
-                      int resultId = ResultService.resultList.stream().filter(result -> result.getExamId() == examId).findFirst().orElse(null).getResultId();
-//
-               ResultDetailService.resultDetailList.stream().filter(resultDetail -> resultDetail.getResultId() == resultId).forEach(ResultDetail::displayData);
-                  }catch (NullPointerException e){
-                      System.out.println("User havent take this exam.");
-                  }
-                }
-            }
-        } else {
-            System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
-        }
-    }
 
     @Override
     public void numericUserTakeExam() {
@@ -152,6 +109,88 @@ public class TeacherService implements ITeacher {
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
+    }
+
+    @Override
+    public void updateInfo() {
+        System.out.println("What part you want to update");
+        System.out.println("1. UserName");
+        System.out.println("2. Phone Number");
+        System.out.println("3. Address");
+        System.out.println("4. First Name");
+        System.out.println("5. Last Name");
+        System.out.println("5. Quit");
+        byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+        switch (choice) {
+            case 1:
+                updateUsername();
+                break;
+            case 2:
+                updatePhoneNumber();
+                break;
+            case 3:
+                updateAddress();
+                break;
+            case 4:
+                updateFirstName();
+                break;
+            case 5:
+                updateLastName();
+                break;
+            case 6:
+
+                break;
+
+            default:
+                System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
+                break;
+
+        }
+    }
+
+    @Override
+    public void displayInfo() {
+        LoginMenu.user.displayPerUser();
+    }
+
+    private void updateUsername() {
+        System.out.println("Input UserName");
+        String userName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_USERNAME, ErrorAndRegex.ERROR_VALUE);
+        LoginMenu.user.setUserName(userName);
+        UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
+    }
+
+    private void updateLastName() {
+        System.out.println("Input Last Name");
+        String lastName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
+        LoginMenu.user.setLastName(lastName);
+        UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
+    }
+
+    private void updateFirstName() {
+        System.out.println("Input FirstName");
+        String firstName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
+        LoginMenu.user.setFirstName(firstName);
+        UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
+    }
+
+    private void updatePhoneNumber() {
+        System.out.println("Input Phone number");
+        String phoneNumber = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_PHONE, ErrorAndRegex.ERROR_VALUE);
+        LoginMenu.user.setPhoneNumber(phoneNumber);
+        UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
+    }
+
+    private void updateAddress() {
+        System.out.println("Input Address");
+        String address = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
+        LoginMenu.user.setPhoneNumber(address);
+        UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
     private void menuUpdateExam(int examId, Exam examUpdate) {

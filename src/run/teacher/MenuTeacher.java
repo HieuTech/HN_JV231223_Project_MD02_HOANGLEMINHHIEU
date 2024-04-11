@@ -1,15 +1,13 @@
-package run;
+package run.teacher;
 
 import bussiness.design.ITeacher;
 import bussiness.entity.Exam;
-import bussiness.entity.RoleName;
 import bussiness.impl.ExamService;
 import bussiness.impl.TeacherService;
+import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
-
-import java.awt.*;
 
 public class MenuTeacher {
 
@@ -32,9 +30,10 @@ public class MenuTeacher {
             System.out.println("3. Chỉnh sửa đề thi");
             System.out.println("4. Xóa đề thi");
             System.out.println("5. Thống kê kết quả thi của người dự thi");
-            System.out.println("6. Bắt đầu làm bài thi");
-            System.out.println("7. Xem kết quả làm bài thi");
-            System.out.println("8. Đăng xuất");
+            System.out.println("6. Kiểm tra thi thử và xem kết quả");
+            System.out.println("7. Chỉnh sửa thông tin cá nhân");
+            System.out.println("8. Xem thông tin cá nhân");
+            System.out.println("9. Đăng xuất");
 
 
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
@@ -68,9 +67,12 @@ public class MenuTeacher {
                     iTeacher.startExam();
                     break;
                 case 7:
-                    iTeacher.seeResultExam();
+                    iTeacher.updateInfo();
                     break;
                 case 8:
+                    iTeacher.displayInfo();
+                    break;
+                case 9:
                     LoginMenu.user = null;
                     IOFile.writePerObject(IOFile.USER_LOGIN_PATH, LoginMenu.user);
                     return;

@@ -1,5 +1,7 @@
 package bussiness.entity;
 
+import bussiness.impl.AnswerService;
+import bussiness.impl.QuestionService;
 import bussiness.impl.UserService;
 import utils.ErrorAndRegex;
 
@@ -7,16 +9,16 @@ import java.io.Serializable;
 
 public class ResultDetail implements Serializable {
     private int resultId;
-    private int indexQuestion, indexChoice;
+    private int questionId, answerId;
     private boolean check;
 
     public ResultDetail() {
     }
 
-    public ResultDetail(int resultId, byte indexQuestion, int indexChoice, boolean check) {
+    public ResultDetail(int resultId, byte questionId, int answerId, boolean check) {
         this.resultId = resultId;
-        this.indexQuestion = indexQuestion;
-        this.indexChoice = indexChoice;
+        this.questionId = questionId;
+        this.answerId = answerId;
         this.check = check;
     }
 
@@ -29,19 +31,19 @@ public class ResultDetail implements Serializable {
     }
 
     public int getIndexQuestion() {
-        return indexQuestion;
+        return questionId;
     }
 
-    public void setIndexQuestion(int indexQuestion) {
-        this.indexQuestion = indexQuestion;
+    public void setIndexQuestion(int questionId) {
+        this.questionId = questionId;
     }
 
     public int getIndexChoice() {
-        return indexChoice;
+        return answerId;
     }
 
-    public void setIndexChoice(int indexChoice) {
-        this.indexChoice = indexChoice;
+    public void setIndexChoice(int answerId) {
+        this.answerId = answerId;
     }
 
     public boolean isCheck() {
@@ -52,18 +54,20 @@ public class ResultDetail implements Serializable {
         this.check = check;
     }
 
-    public void inputData(int resultId, int indexQuestion, int choice, boolean check) {
+    public void inputData(int resultId, int questionId, int choice, boolean check) {
         this.setResultId(resultId);
-        this.setIndexQuestion(indexQuestion);
+        this.setIndexQuestion(questionId);
         this.setIndexChoice(choice);
         this.setCheck(check);
     }
 
     public void displayData() {
+        String questionContent = QuestionService.questionList.stream().filter(question -> question.getQuestionId() == this.questionId).findFirst().orElse(null).getQuestionContent();
+        String answerContent =  AnswerService.answerList.stream().filter(answer -> answer.getAnswerId() == this.answerId).findFirst().orElse(null).getAnswerContent();
         System.out.println("---------------------RESULT_DETAIL------------------------ ");
-        System.out.printf("%s| ID: %s | Index Question: %s | Index Choice: %s | Check: %-4s |  %s\n",
-                ErrorAndRegex.ANSI_GREEN, this.resultId, this.indexQuestion,
-                this.indexChoice, this.check ? "Correct" : "Incorrect", ErrorAndRegex.ANSI_RESET);
+        System.out.printf("%s| ID: %s |  Question: %s | Your Answer: %s | Result: %-4s |  %s\n",
+                ErrorAndRegex.ANSI_GREEN, this.resultId, questionContent,
+                answerContent, this.check ? "Correct" : "Incorrect", ErrorAndRegex.ANSI_RESET);
         System.out.println("------------------------------------------------------------------------------------------------------");
     }
 }

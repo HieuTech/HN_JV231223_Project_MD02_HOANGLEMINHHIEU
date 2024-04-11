@@ -2,6 +2,7 @@ package bussiness.impl;
 
 import bussiness.design.IUser;
 import bussiness.entity.*;
+import org.mindrot.jbcrypt.BCrypt;
 import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
@@ -31,14 +32,17 @@ public class UserService implements IUser {
         if (userChangePassword != null) {
             while (true) {
                 System.out.println("Input New Password");
+
                 String newPassword = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_PASSWORD, ErrorAndRegex.ERROR_VALUE);
                 System.out.println("Retype New Password");
                 String reTypeNewPassword = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_PASSWORD, ErrorAndRegex.ERROR_VALUE);
                 if (newPassword.equals(reTypeNewPassword)) {
-                    userChangePassword.setPassword(reTypeNewPassword);
 
+                    userChangePassword.setPassword(BCrypt.hashpw(reTypeNewPassword, BCrypt.gensalt(5)));
                     UserService.userList.set(UserService.userList.indexOf(userChangePassword), userChangePassword);
                     IOFile.writeData(IOFile.USER_PATH, UserService.userList);
+                    System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
+                    break;
                 } else {
                     System.out.println("Password not match");
                 }
@@ -99,20 +103,18 @@ public class UserService implements IUser {
                 int choice = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
                 if (choice == questions.get(i).getAnswerTrue()) {
                     totalPoint += 1;
-                    resultDetail.inputData(result.getResultId(), i, choice, true);
+                    resultDetail.inputData(result.getResultId(), questions.get(i).getQuestionId(), choice, true);
                     ResultDetailService.resultDetailList.add(resultDetail);
-                }else{
-                    resultDetail.inputData(result.getResultId(),i, choice, false);
+                } else {
+                    resultDetail.inputData(result.getResultId(), questions.get(i).getQuestionId(), choice, false);
                     ResultDetailService.resultDetailList.add(resultDetail);
                 }
 
             }
-            if ((double) questions.size() / totalPoint >= 0.5) {
-                result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, true);
-
-            } else {
+            try {
+                result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, (double) (questions.size() / totalPoint) >= 0.5);
+            } catch (ArithmeticException e) {
                 result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, false);
-
             }
 
             ResultService.resultList.add(result);
@@ -130,23 +132,13 @@ public class UserService implements IUser {
     public void seeResultExam() {
         if (ResultService.resultList.stream().anyMatch(result1 -> result1.getUserId() == LoginMenu.user.getUserId())) {
             ResultService.resultList.stream().filter(result -> result.getUserId() == LoginMenu.user.getUserId()).forEach(Result::displayData);
-
-            System.out.println("Input ExamId You Want To Review.");
-            int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-            Exam examWatch = findExamById(examId);
-            if (examWatch != null) {
-
-                ResultService.resultList.stream().filter(result -> result.getExamId() == examId).forEach(Result::displayData);
-                System.out.println("Do You Want To See Result Detail? | 1. YES | 2. NO");
-                byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-
-                if (choice == 1) {
-                    try {
-                        int resultId = ResultService.resultList.stream().filter(result -> result.getExamId() == examId).findFirst().orElse(null).getResultId();
-                        ResultDetailService.resultDetailList.stream().filter(resultDetail -> resultDetail.getResultId() == resultId).forEach(ResultDetail::displayData);
-                    } catch (NullPointerException e) {
-                        System.out.println("User havent take this exam.");
-                    }
+            System.out.println("Input Result Id  You Want To Review.");
+            int resultId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
+            if (ResultService.resultList.stream().anyMatch(result -> result.getResultId() == resultId)) {
+                try {
+                    ResultDetailService.resultDetailList.stream().filter(resultDetail -> resultDetail.getResultId() == resultId).forEach(ResultDetail::displayData);
+                } catch (NullPointerException e) {
+                    System.out.println("User havent take this exam.");
                 }
             }
         } else {
@@ -155,7 +147,6 @@ public class UserService implements IUser {
 
 
     }
-
 
     @Override
     public void displayInfo() {

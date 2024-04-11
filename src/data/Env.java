@@ -6,4 +6,5 @@ public class Env {
     public static int getKeyAdmin() {
         return keyAdmin;
     }
+
 }

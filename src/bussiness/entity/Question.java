@@ -78,7 +78,7 @@ public class Question implements Serializable {
 
     public void displayData() {
         System.out.println("Question");
-        System.out.printf("%s| ID: %d | Question Content: %-20s \n | Right Answer: %-3s %s\n", ErrorAndRegex.ANSI_BLUE, this.questionId, this.questionContent, this.answerTrue,ErrorAndRegex.ANSI_RESET);
+        System.out.printf("%s| ID: %d | Question Content: %-20s \n | Right Answer: %-3s %s\n", ErrorAndRegex.ANSI_BLUE, this.questionId, this.questionContent, this.answerTrue, ErrorAndRegex.ANSI_RESET);
         System.out.println("Answer");
         AnswerService.answerList.stream().filter(answer -> answer.getQuestionId() == this.questionId).forEach(Answer::displayData);
         System.out.println("-------------------------------------------------------------------");
@@ -101,10 +101,7 @@ public class Question implements Serializable {
             getInputAnswerList(this.questionId);
             getInputAnswerTrue();
         }
-
-
         System.out.println("Input Question Done");
-
     }
 
 

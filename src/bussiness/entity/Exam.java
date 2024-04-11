@@ -3,6 +3,7 @@ package bussiness.entity;
 import bussiness.impl.CatalogService;
 import bussiness.impl.ExamService;
 import bussiness.impl.QuestionService;
+import bussiness.impl.UserService;
 import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
@@ -107,9 +108,10 @@ public class Exam implements Serializable {
     }
 
     public void displayData() {
+        String creatorName = UserService.userList.stream().filter(user -> user.getUserId() == this.userId).findFirst().orElse(null).getUserName();
         System.out.println("---------------------EXAM__INFO------------------------ ");
-        System.out.printf("%s| ID: %s | Creator: %-4s | Desc: %-15s | Status: %-7s | Created_Date: %-10s %s \n", ErrorAndRegex.ANSI_CYAN, this.examId,
-                this.userId, this.description, this.status ? "PUBLISH" : "PRIVATE", this.createAt, ErrorAndRegex.ANSI_RESET);
+        System.out.printf("%s| ID: %s | Creator: %-5s | Exam Title: %-15s | Status: %-7s | Created_Date: %-10s %s \n", ErrorAndRegex.ANSI_CYAN, this.examId,
+                creatorName, this.description, this.status ? "PUBLISH" : "PRIVATE", this.createAt, ErrorAndRegex.ANSI_RESET);
         System.out.println("------------------------------------------------------------------------------------------------------");
 
 

@@ -11,8 +11,11 @@ public interface ITeacher extends IGeneric<User, Exam, Integer>{
 
     public void startExam();
 
-    public void seeResultExam();
 
     public void numericUserTakeExam();
+
+    public void updateInfo();
+
+    public void displayInfo();
 
 }

@@ -1,12 +1,11 @@
-package run;
+package run.user;
 
 import bussiness.design.IUser;
 import bussiness.impl.UserService;
+import run.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
-
-import java.sql.SQLOutput;
 
 public class MenuUser {
 
