@@ -7,6 +7,7 @@ import utils.QuizConFig;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 
 public class Result implements Serializable {
@@ -14,13 +15,13 @@ public class Result implements Serializable {
 
     private int resultId, userId, examId, totalPoint;
     private LocalDate createdDate;
-    private boolean result;
+    private String result;
 
-    public boolean isResult() {
+    public String getResult() {
         return result;
     }
 
-    public void setResult(boolean result) {
+    public void setResult(String result) {
         this.result = result;
     }
 
@@ -28,7 +29,7 @@ public class Result implements Serializable {
         this.setResultId(getNewId());
     }
 
-    public Result(int resultId, int userId, int examId, int totalPoint, LocalDate createdDate, boolean result) {
+    public Result(int resultId, int userId, int examId, int totalPoint, LocalDate createdDate, String result) {
         this.resultId = resultId;
         this.userId = userId;
         this.examId = examId;
@@ -82,13 +83,13 @@ public class Result implements Serializable {
         System.out.printf("%s| ID: %s | ExamID: %-4s | UserName: %-10s | Total Point: %s | Result: %-4s | Created_Date: %-10s %s\n",
                 ErrorAndRegex.ANSI_PURPLE, this.resultId, this.examId,
                 UserService.userList.stream().filter(user -> user.getUserId() == this.userId).findFirst().orElse(null).getUserName(),
-                this.totalPoint, (this.result ? "Passed" : "False"), this.createdDate, ErrorAndRegex.ANSI_RESET);
+                this.totalPoint, this.result, this.createdDate, ErrorAndRegex.ANSI_RESET);
         System.out.println("------------------------------------------------------------------------------------------------------");
 
     }
-    public void inputData(int userId, int examId, int totalPoint, boolean result) {
+    public void inputData(int userId, int examId, int totalPoint, String result) {
 
-        setCreatedDate();
+        this.setCreatedDate(getInputCreatedDate());
         this.setUserId(userId);
         this.setExamId(examId);
         this.setTotalPoint(totalPoint);
@@ -96,13 +97,16 @@ public class Result implements Serializable {
 
     }
 
-    private void setCreatedDate() {
-        LocalDate localDate = LocalDate.now();
-        String formattedDate = localDate.format(QuizConFig.DTF);
-
-// Sử dụng cùng định dạng khi phân tích cú pháp
-        LocalDate parsedDate = LocalDate.parse(formattedDate, QuizConFig.DTF);
-        this.setCreatedDate(parsedDate);
+    private LocalDate getInputCreatedDate() {
+        while (true){
+            try{
+                System.out.println(" Input Created Date Take Exam");
+                String inputDate = QuizConFig.scanner.nextLine();
+                return LocalDate.parse(inputDate, QuizConFig.DTF);
+            }catch (DateTimeParseException e){
+                System.out.println(ErrorAndRegex.ERROR_DATETIME);
+            }
+        }
     }
 
 

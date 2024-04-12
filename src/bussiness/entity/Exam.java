@@ -4,7 +4,7 @@ import bussiness.impl.CatalogService;
 import bussiness.impl.ExamService;
 import bussiness.impl.QuestionService;
 import bussiness.impl.UserService;
-import run.LoginMenu;
+import run.login.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
@@ -12,23 +12,32 @@ import utils.QuizConFig;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class Exam implements Serializable {
     private int examId, userId;
-    private String description;
+    private String description, catalogId;
     private List<Catalog> catalogList = CatalogService.catalogList;
 
     private LocalDate createAt;
     private List<Question> questionList = QuestionService.questionList;
     private long duration;
 
+private int searchNumber;
+
     private boolean status;
 
     public Exam() {
 
+    }
+
+    public String getCatalogId() {
+        return catalogId;
+    }
+
+    public void setCatalogId(String catalogId) {
+        this.catalogId = catalogId;
     }
 
     public Exam(int examId, int userId, String description, List<Catalog> catalogList, LocalDate createAt, List<Question> questionList, long duration, boolean status) {
@@ -40,6 +49,14 @@ public class Exam implements Serializable {
         this.questionList = questionList;
         this.duration = duration;
         this.status = status;
+    }
+
+    public int getSearchNumber() {
+        return searchNumber;
+    }
+
+    public void setSearchNumber(int searchNumber) {
+        this.searchNumber = searchNumber;
     }
 
     public int getExamId() {
@@ -122,7 +139,7 @@ public class Exam implements Serializable {
             this.setExamId(getNewId());
             this.setUserId(LoginMenu.user.getUserId());
             getInputCatalogList();
-            getInputCreateDate();
+            this.setCreateAt(getInputCreateDate());
             getInputQuestion();
         }
 
@@ -165,11 +182,11 @@ public class Exam implements Serializable {
                     Catalog catalog = new Catalog();
                     catalog.inputData(true, this.examId);
                     CatalogService.catalogList.add(catalog);
+                    this.setCatalogId(catalog.getCatalogId());
                 }
                 this.catalogList = CatalogService.catalogList;
                 IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
                 break;
-//                return CatalogService.catalogList;
             } else {
                 System.out.println("List Of Categories");
                 CatalogService.catalogList.forEach(Catalog::displayPerCatalog);
@@ -187,16 +204,15 @@ public class Exam implements Serializable {
                     }
                     this.catalogList = CatalogService.catalogList;
                     IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
-//                    return CatalogService.catalogList;
                 } else if (select == 2) {
                     while (true) {
                         System.out.println("Choose catalogId");
                         String catalogIdChoose = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_CATALOG_ID, ErrorAndRegex.ERROR_VALUE);
                         if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogId().equals(catalogIdChoose))) {
                             this.catalogList = CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(catalogIdChoose)).toList();
-//                                IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+                            IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+                            this.setCatalogId(catalogIdChoose);
                             return;
-//                                return CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(catalogIdChoose)).toList();
                         } else {
                             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
                         }
@@ -212,11 +228,19 @@ public class Exam implements Serializable {
         }
     }
 
-    public void getInputCreateDate() {
-        LocalDate localDate = LocalDate.now();
-        String formattedDate = localDate.format(QuizConFig.DTF);
-        LocalDate parsedDate = LocalDate.parse(formattedDate, QuizConFig.DTF);
-        this.setCreateAt(parsedDate);
+    public LocalDate getInputCreateDate() {
+
+        while (true) {
+            System.out.println("Input Created Date ");
+            String birthday = QuizConFig.scanner.nextLine();
+            try {
+                return LocalDate.parse(birthday, QuizConFig.DTF);
+            } catch (DateTimeParseException e) {
+                System.err.println(ErrorAndRegex.ERROR_DATETIME);
+            }
+        }
+
+
     }
 
     public int getNewId() {

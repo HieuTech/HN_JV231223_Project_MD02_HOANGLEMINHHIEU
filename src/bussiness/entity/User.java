@@ -7,6 +7,8 @@ import utils.ErrorAndRegex;
 import utils.QuizConFig;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 
 public class User implements Serializable {
@@ -16,7 +18,17 @@ public class User implements Serializable {
     private RoleName roleName = RoleName.ROLE_USER;
     private boolean userStatus = true;
 
-    public User(int userId, String firstName, String lastName, String userName, String password, String email, String address, String phoneNumber, RoleName roleName, boolean userStatus) {
+    private LocalDate createdDate;
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public User(int userId, String firstName, String lastName, String userName, String password, String email, String address, String phoneNumber, RoleName roleName, boolean userStatus, LocalDate createdDate) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,8 +39,8 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
         this.roleName = roleName;
         this.userStatus = userStatus;
+        this.createdDate = createdDate;
     }
-
 
     public User() {
     }
@@ -134,6 +146,19 @@ public class User implements Serializable {
         this.setLastName(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
         System.out.println("Input Address");
         this.setAddress(QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY));
+        System.out.println("Input Created Date");
+        this.setCreatedDate(getInputCreatedDate());
+    }
+
+    private LocalDate getInputCreatedDate(){
+        while (true){
+            try{
+                String inputDate = QuizConFig.scanner.nextLine();
+                return LocalDate.parse(inputDate, QuizConFig.DTF);
+            }catch (DateTimeParseException e){
+                System.out.println(ErrorAndRegex.ERROR_DATETIME);
+            }
+        }
     }
 
     public RoleName getInputRole(){
@@ -195,9 +220,9 @@ public class User implements Serializable {
 
     public void displayPerUser() {
         System.out.printf("%s|ID: %-3s | userName: %-10s | Role : %5s " +
-                        "| First Name: %-6s | Last Name: %-6s | PhoneNumber: %-10s | Address: %-12s | Status: %-4s | email: %-10s " +
+                        "| First Name: %-6s | Last Name: %-6s | PhoneNumber: %-10s | Created Date: %-6s | Status: %-4s | email: %-10s " +
                         "|  password: %-10s %s\n",
-               ErrorAndRegex.ANSI_YELLOW, this.userId, this.userName, this.roleName, this.firstName, this.lastName, this.phoneNumber, this.address,
+               ErrorAndRegex.ANSI_YELLOW, this.userId, this.userName, this.roleName, this.firstName, this.lastName, this.phoneNumber, this.createdDate,
                 (this.userStatus ? "ACTIVE" : "INACTIVE"), this.email, this.password, ErrorAndRegex.ANSI_RESET
         );
     }

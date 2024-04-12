@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class QuizConFig {
-    public static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    public static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static Scanner scanner = new Scanner(System.in);
 

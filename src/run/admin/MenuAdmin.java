@@ -2,7 +2,7 @@ package run.admin;
 
 import bussiness.design.IAdmin;
 import bussiness.impl.AdminService;
-import run.LoginMenu;
+import run.login.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
@@ -25,50 +25,28 @@ public class MenuAdmin {
 
     public void displayMenuAdmin() {
         while (true) {
-            System.out.println("-----Welcome to Admin page----");
-            System.out.println("1. Hiển thị danh sách toàn bộ user ");
-            System.out.println("2. Khóa / mở người dùng  ");
-            System.out.println("3. Tìm kiếm thông tin người dùng theo tên  ");
-            System.out.println("4. thống kê danh sách người dự thi  ");
-            System.out.println("5. thống kê danh sách bài thi  ");
-            System.out.println("6. thông kê điểm thi trung bình theo tháng  ");
-            System.out.println("7. thống kê tôp 10 bạn có điểm thi cao nhất trong tháng  ");
-            System.out.println("8. Đăng Xuất ");
+            System.out.printf("-----Welcome %-5s---- \n", LoginMenu.user.getUserName());
 
+            System.out.println("1. Admin Management ");
+            System.out.println("2. Numeric Report ");
+            System.out.println("3. Sign Out ");
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
             switch (choice) {
                 case 1:
-            iAdmin.displayAllUser();
+                    AdminManagement.getInstance().displayAdminManagement(iAdmin);
                     break;
                 case 2:
-                    iAdmin.blockAndUnblockUser();
+                    NumericReport.getInstance().displayNumericReport(iAdmin);
                     break;
                 case 3:
-                    iAdmin.findUserByName();
-                    break;
-                case 4:
-
-                    break;
-                case 5:
-
-                    break;
-                case 6:
-
-                    break;
-                case 7:
-                    break;
-                case 8:
                     LoginMenu.user = null;
                     IOFile.writePerObject(IOFile.USER_LOGIN_PATH, LoginMenu.user);
                     return;
                 default:
                     System.out.println("Your choice out of range");
                     break;
-
             }
-
         }
-
 
     }
 }

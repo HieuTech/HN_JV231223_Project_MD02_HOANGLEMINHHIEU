@@ -20,11 +20,20 @@ public class ErrorAndRegex {
     public static final String ERROR_BLOCK_ACCOUNT= "Your account is banned, please contact admin(vegan@gmail.com)";
     public static final String ERROR_VALUE= "Input invalid";
     public static final String ERROR_EMPTY = "Input Is Not Be Empty";
+    public static final String ERROR_DATETIME = "Your Input Wrong Format dd/MM/yyyy";
     public static final String ERROR_EXIST = "Value Is Exist";
     public static final String ERROR_OUT_OF_RANGE = "Value Out Of Range";
     public static final String ERROR_NOT_FOUND = "Value Not Found";
     public static final String NOTIFY_EMPTY= "List Is Empty";
     public static final String NOTIFY_SUCCESS= "Successfully";
+
+    public static final String RANK_EXCELLENT = "Excellent";
+    public static final String RANK_FAIR = "Fair";
+    public static final String RANK_AVERAGE = "Average";
+    public static final float RANK_EXCELLENT_SCORE = 0.8f;
+    public static final float RANK_FAIR_SCORE = 0.5f;
+
+
 
 
 }

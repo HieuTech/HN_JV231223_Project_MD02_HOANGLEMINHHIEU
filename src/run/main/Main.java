@@ -1,6 +1,6 @@
-package run;
+package run.main;
 
-import bussiness.entity.RoleName;
+import run.login.LoginMenu;
 
 public class Main {
     public static void main(String[] args) {

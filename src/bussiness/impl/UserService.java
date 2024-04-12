@@ -3,7 +3,7 @@ package bussiness.impl;
 import bussiness.design.IUser;
 import bussiness.entity.*;
 import org.mindrot.jbcrypt.BCrypt;
-import run.LoginMenu;
+import run.login.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
@@ -54,18 +54,37 @@ public class UserService implements IUser {
 
     @Override
     public void findExamByName() {
+
+        //just display public exam
         System.out.println("Input Catalog Name Or Exam Title To Look For");
         String inputSearch = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         if (ExamService.examList.stream().anyMatch(exam -> exam.getDescription().contains(inputSearch))) {
-//            ExamService.examList.stream().filter(exam -> exam.getDescription().contains(inputSearch)).forEach(Exam::displayData);
             List<Exam> exams = ExamService.examList.stream().filter(exam -> exam.getDescription().contains(inputSearch)).toList();
             exams.stream().filter(Exam::isStatus).forEach(Exam::displayData);
+
+            //tich luy so lan search
+            for (int i = 0; i < exams.size(); i++) {
+                if(exams.get(i).isStatus()){
+                    exams.get(i).setSearchNumber(exams.get(i).getSearchNumber() + 1);
+                    ExamService.examList.set(ExamService.examList.indexOf(exams.get(i)), exams.get(i));
+                    IOFile.writeData(IOFile.EXAM_PATH, ExamService.examList);
+                }
+            }
+
         } else if (CatalogService.catalogList.stream().anyMatch(catalog -> catalog.getCatalogName().contains(inputSearch))) {
             int examId = CatalogService.catalogList.stream()
                     .filter(catalog -> catalog.getCatalogName().equals(inputSearch)).findFirst().orElse(null).getExamId();
-//            ExamService.examList.stream().filter(exam -> exam.getExamId() == examId).forEach(Exam::displayData);
             List<Exam> exams = ExamService.examList.stream().filter(exam -> exam.getExamId() == examId).toList();
             exams.stream().filter(Exam::isStatus).forEach(Exam::displayData);
+
+            for (int i = 0; i < exams.size(); i++) {
+                if(exams.get(i).isStatus()){
+                    exams.get(i).setSearchNumber(exams.get(i).getSearchNumber() + 1);
+                    ExamService.examList.set(ExamService.examList.indexOf(exams.get(i)), exams.get(i));
+                    IOFile.writeData(IOFile.EXAM_PATH, ExamService.examList);
+                }
+            }
+
 
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
@@ -111,10 +130,18 @@ public class UserService implements IUser {
                 }
 
             }
+
+
             try {
-                result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, (double) (questions.size() / totalPoint) >= 0.5);
+                if ((float) (questions.size() / totalPoint) >= ErrorAndRegex.RANK_EXCELLENT_SCORE) {
+                    result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_EXCELLENT);
+                } else if ((float) (questions.size() / totalPoint) >= ErrorAndRegex.RANK_FAIR_SCORE && (float) (questions.size() / totalPoint) <= ErrorAndRegex.RANK_EXCELLENT_SCORE) {
+                    result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_FAIR);
+                } else {
+                    result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_AVERAGE);
+                }
             } catch (ArithmeticException e) {
-                result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, false);
+                result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_AVERAGE);
             }
 
             ResultService.resultList.add(result);
@@ -150,7 +177,7 @@ public class UserService implements IUser {
 
     @Override
     public void displayInfo() {
-        LoginMenu.user.displayPerUser();
+        LoginMenu.user.displayExamMember();
     }
 
     @Override

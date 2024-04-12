@@ -3,16 +3,14 @@ package bussiness.impl;
 
 import bussiness.design.ITeacher;
 import bussiness.entity.*;
-import run.LoginMenu;
+import run.login.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TeacherService implements ITeacher {
     @Override
@@ -38,10 +36,9 @@ public class TeacherService implements ITeacher {
         int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         Exam examUpdate = findExamById(examId);
         if (examUpdate != null) {
-            CatalogService.catalogList.stream().filter(catalog -> catalog.getExamId() == examId).forEach(Catalog::displayPerCatalog);
+            CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(examUpdate.getCatalogId())).forEach(Catalog::displayPerCatalog);
             System.out.println("-------------------------------------------------------------------");
             QuestionService.questionList.stream().filter(question -> question.getExamId() == examId).forEach(Question::displayData);
-
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
@@ -81,7 +78,18 @@ public class TeacherService implements ITeacher {
 
 
             }
-            result.inputData(examStart.getUserId(), examId, totalPoint, (double) questions.size() / totalPoint >= 0.5);
+            try {
+                if ((float) (questions.size() / totalPoint) >= ErrorAndRegex.RANK_EXCELLENT_SCORE) {
+                    result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_EXCELLENT);
+                } else if ((float) (questions.size() / totalPoint) >= ErrorAndRegex.RANK_FAIR_SCORE && (float) (questions.size() / totalPoint) <= ErrorAndRegex.RANK_EXCELLENT_SCORE) {
+                    result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_FAIR);
+                } else {
+                    result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_AVERAGE);
+                }
+            } catch (ArithmeticException e) {
+                result.inputData(LoginMenu.user.getUserId(), examId, totalPoint, ErrorAndRegex.RANK_AVERAGE);
+            }
+
             result.displayData();
             resultDetailList.forEach(ResultDetail::displayData);
             System.out.println("---------------TEST__EXAM__DONE---------------------");
@@ -119,7 +127,7 @@ public class TeacherService implements ITeacher {
         System.out.println("3. Address");
         System.out.println("4. First Name");
         System.out.println("5. Last Name");
-        System.out.println("5. Quit");
+        System.out.println("6. Quit");
         byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         switch (choice) {
             case 1:
@@ -332,8 +340,24 @@ public class TeacherService implements ITeacher {
         int examId = QuizConFig.getInt(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         Exam examDelete = findExamById(examId);
         if (examDelete != null) {
+            //delete answer, write file
+            for (Question question : examDelete.getQuestionList()) {
+                for (Answer answer : question.getAnswerList()) {
+                    AnswerService.answerList.remove(answer);
+                    IOFile.writeData(IOFile.ANSWER_PATH, AnswerService.answerList);
+                }
+            }
+
+            //delete question, write file
+            for (Question question : examDelete.getQuestionList()) {
+                QuestionService.questionList.remove(question);
+                IOFile.writeData(IOFile.QUESTION_PATH, QuestionService.questionList);
+            }
+            //delete exam, write file
+
             ExamService.examList.remove(examDelete);
             IOFile.writeData(IOFile.EXAM_PATH, ExamService.examList);
+
             System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);

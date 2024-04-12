@@ -4,7 +4,7 @@ import bussiness.design.ITeacher;
 import bussiness.entity.Exam;
 import bussiness.impl.ExamService;
 import bussiness.impl.TeacherService;
-import run.LoginMenu;
+import run.login.LoginMenu;
 import utils.ErrorAndRegex;
 import utils.IOFile;
 import utils.QuizConFig;
@@ -24,55 +24,20 @@ public class MenuTeacher {
 
     public void displayMenuTeacher() {
         while (true) {
-            System.out.println("Welcome to teacher page");
-            System.out.println("1. Hiển thị danh sách đề thi");
-            System.out.println("2. Thêm mới đề thi");
-            System.out.println("3. Chỉnh sửa đề thi");
-            System.out.println("4. Xóa đề thi");
-            System.out.println("5. Thống kê kết quả thi của người dự thi");
-            System.out.println("6. Kiểm tra thi thử và xem kết quả");
-            System.out.println("7. Chỉnh sửa thông tin cá nhân");
-            System.out.println("8. Xem thông tin cá nhân");
-            System.out.println("9. Đăng xuất");
+            System.out.printf("Welcome %-5s \n", LoginMenu.user.getUserName());
 
-
+            System.out.println("1. Exam Management");
+            System.out.println("2. Report Management");
+            System.out.println("3. Sign Out");
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
             switch (choice) {
                 case 1:
-                    if (ExamService.examList.isEmpty()) {
-                        System.out.println("Exam List Is Empty");
-                    } else {
-                        ExamService.examList.forEach(Exam::displayData);
-                        System.out.println("Do you want to see detail? | 1. YES  | 2. NO");
-                        byte choice1 = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
-                        if (choice1 == 1) {
-                            iTeacher.seeDetailExam();
-                        }
-                    }
+                    ExamManagement.getInstance().displayExamManagement(iTeacher);
                     break;
-
                 case 2:
-                    iTeacher.addNewELement();
+                    ReportManagement.getInstance().displayReportManagement(iTeacher);
                     break;
                 case 3:
-                    iTeacher.editElement();
-                    break;
-                case 4:
-                    iTeacher.deleteElement();
-                    break;
-                case 5:
-                    iTeacher.numericUserTakeExam();
-                    break;
-                case 6:
-                    iTeacher.startExam();
-                    break;
-                case 7:
-                    iTeacher.updateInfo();
-                    break;
-                case 8:
-                    iTeacher.displayInfo();
-                    break;
-                case 9:
                     LoginMenu.user = null;
                     IOFile.writePerObject(IOFile.USER_LOGIN_PATH, LoginMenu.user);
                     return;
