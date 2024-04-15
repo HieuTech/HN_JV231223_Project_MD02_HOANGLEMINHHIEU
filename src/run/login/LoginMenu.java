@@ -31,9 +31,9 @@ public class LoginMenu {
         while (true) {
             if (user == null) {
                 System.out.println("++++++++++++++++++++++++MENU+++++++++++++++++++++++");
-                System.out.println("1. Dang nhap");
-                System.out.println("2. Dang ky");
-                System.out.println("3. Thoat");
+                System.out.println("1. Login ");
+                System.out.println("2. Register ");
+                System.out.println("3. Quit");
                 byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
                 switch (choice) {
                     case 1:
@@ -82,10 +82,10 @@ public class LoginMenu {
     }
 
     public void login() {
-        System.out.println("----------Dang nhap--------------");
-        System.out.println("Nhap username :");
+        System.out.println("---------------- Login --------------");
+        System.out.println("Input Username :");
         String userName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY);
-        System.out.println("Nhap password :");
+        System.out.println("Input Password :");
         String passWord = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_EMPTY);
         User userLogin = iAuthentication.login(userName, passWord);
         if (userLogin != null) {
@@ -115,10 +115,10 @@ public class LoginMenu {
                 displayLoginMenu();
             }
         } else {
-            System.err.println("Tai khoan hoac mat khau khong chinh xac");
-            System.out.println("1. Tiep tuc dang nhap");
-            System.out.println("2. Ban chua co tai khoan, Dang ky ngay");
-            System.out.println("3. Thoat");
+            System.err.println("User Name Or Password Invalid");
+            System.out.println("1. Continues To Login");
+            System.out.println("2. You Have Not Account Yet, Register Now");
+            System.out.println("3. Quit");
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
             switch (choice) {
                 case 1:
@@ -137,10 +137,10 @@ public class LoginMenu {
     }
 
     public void register() {
-        System.out.println("--------------Dang ky----------------");
+        System.out.println("--------------Register----------------");
         User user = new User();
         iAuthentication.register(user);
-        System.out.println("Dang ki thanh cong");
+        System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
         login();
 
     }

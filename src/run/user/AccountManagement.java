@@ -17,10 +17,10 @@ public class AccountManagement {
     public void displayAccountManagement(IUser iUser){
         while (true) {
             System.out.printf("Welcome To %-5s Account Management Page \n", LoginMenu.user.getUserName());
-            System.out.println("1. Hiển thị thông tin cá nhân");
-            System.out.println("2. Chỉnh sửa thông tin cá nhân");
-            System.out.println("3. Hiển thị lịch sử bài thi và review bài thi");
-            System.out.println("4. Đồi mật khẩu");
+            System.out.println("1. Display Private Information");
+            System.out.println("2. Update Private Information");
+            System.out.println("3. Display History Of Exam And Review Exam");
+            System.out.println("4. Change Password");
             System.out.println("5. Quit");
             boolean isExit = false;
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);

@@ -20,10 +20,10 @@ public class ExamManagement {
     public void displayExamManagement(ITeacher iTeacher) {
         while (true) {
             System.out.printf("Welcome To %-5s Exam Management Page \n", LoginMenu.user.getUserName());
-            System.out.println("1. Hiển thị danh sách đề thi");
-            System.out.println("2. Thêm mới đề thi");
-            System.out.println("3. Chỉnh sửa đề thi");
-            System.out.println("4. Xóa đề thi");
+            System.out.println("1. Display All Exam");
+            System.out.println("2. Add New Exam");
+            System.out.println("3. Update Exam");
+            System.out.println("4. Delete Exam");
             System.out.println("5. Quit");
             boolean isExit = false;
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);

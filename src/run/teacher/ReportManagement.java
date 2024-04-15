@@ -18,10 +18,10 @@ private ReportManagement(){};
     public void displayReportManagement(ITeacher iTeacher){
         while (true) {
             System.out.printf("Welcome To %-5s Report Management Page \n", LoginMenu.user.getUserName());
-            System.out.println("1. Thống kê kết quả thi của người dự thi");
-            System.out.println("2. Kiểm tra thi thử và xem kết quả");
-            System.out.println("3. Chỉnh sửa thông tin cá nhân");
-            System.out.println("4. Xem thông tin cá nhân");
+            System.out.println("1. Numeric Result Of The Student");
+            System.out.println("2. Test Exam And See Result");
+            System.out.println("3. Update User Private Information");
+            System.out.println("4. Display Private Information");
             System.out.println("5. Quit");
             boolean isExit = false;
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);

@@ -10,6 +10,7 @@ import utils.QuizConFig;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AdminService implements IAdmin {
 
@@ -86,39 +87,38 @@ public class AdminService implements IAdmin {
     @Override
     public void findExamMostStudentTookInMonth() {
         //tim trong result, result nao co nhieu examId nhat, thi do dc nhieu nguoi tham gia nhat
-        System.out.println("Input The Month To Find Exam Least Student Took");
+        System.out.println("Input The Month To Exam Most people took");
         byte getMonth = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         if (getMonth >= 1 && getMonth <= 12) {
-
-            List<Result> results = ResultService.resultList.stream().filter(result -> result.getCreatedDate().getMonthValue() == getMonth).toList();
-            Map<Integer, Integer> mapExamId = new HashMap<>();
-
-            for (Result result : results) {
-                if (mapExamId.containsKey(result.getExamId())) {
-                    //da ton tai;
-                    mapExamId.put(result.getExamId(), mapExamId.get(result.getExamId() + 1));
-                } else {
-                    //chua ton tai
-                    mapExamId.put(result.getExamId(), 0);
-                }
+            List<Exam> examList = ExamService.examList.stream().filter(exam -> exam.getCreateAt().getMonthValue() == getMonth).toList();
+            Map<Exam,Integer> map=new HashMap<>();
+            for (Exam exam : examList) {
+                int count = (int) ResultService.resultList.stream().filter(result -> result.getExamId()==exam.getExamId()).count();
+                map.put(exam,count);
             }
 
-            List<Map.Entry<Integer,Integer>> entryList = new ArrayList<>(mapExamId.entrySet());
-            List<Map.Entry<Integer,Integer>> newEntryList = entryList.stream().sorted(Map.Entry.<Integer,Integer>comparingByValue().reversed()).limit(2).toList();
-            List<Integer> listExamId = new ArrayList<>();
+//        map.entrySet().stream() tạo một stream từ các entry của map.
+//        sorted(Map.Entry.comparingByValue().reversed()) sắp xếp các entry theo giá trị giảm dần.
+//                limit(2) giới hạn kết quả đầu ra chỉ gồm hai entry đầu tiên sau khi sắp xếp.
+//        collect(Collectors.toMap(...)) thu thập hai entry này vào một HashMap mới.
+            Map<Exam, Integer> topTwo = map.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.<Exam, Integer>comparingByValue().reversed())
+                    .limit(1)
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, e2) -> e1,
+                            HashMap::new));
 
-            for (byte i = 0; i < newEntryList.size(); i++) {
-                listExamId.add(newEntryList.get(i).getKey());
+            for (Map.Entry<Exam, Integer> examIntegerEntry : topTwo.entrySet()) {
+                examIntegerEntry.getKey().displayData();
+
             }
-
-            for (byte i = 0; i < listExamId.size(); i++) {
-                byte index = i;
-                ExamService.examList.stream().filter(exam -> exam.getExamId() == listExamId.get(index)).forEach(Exam::displayData);
-            }
-
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
+
     }
 
     @Override
@@ -127,7 +127,7 @@ public class AdminService implements IAdmin {
         byte getMonth = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         if (getMonth >= 1 && getMonth <= 12) {
             List<Exam> exams = ExamService.examList.stream().filter(exam -> exam.getCreateAt().getMonthValue() == getMonth).toList();
-            exams.stream().sorted(Comparator.comparing(Exam::getSearchNumber)).limit(2).forEach(Exam::displayData);
+            exams.stream().sorted(Comparator.comparing(Exam::getSearchNumber)).limit(1).forEach(Exam::displayData);
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
@@ -139,7 +139,7 @@ public class AdminService implements IAdmin {
         byte getMonth = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         if (getMonth >= 1 && getMonth <= 12) {
             List<Exam> exams = ExamService.examList.stream().filter(exam -> exam.getCreateAt().getMonthValue() == getMonth).toList();
-            exams.stream().sorted(Comparator.comparing(Exam::getSearchNumber).reversed()).limit(2).forEach(Exam::displayData);
+            exams.stream().sorted(Comparator.comparing(Exam::getSearchNumber).reversed()).limit(1).forEach(Exam::displayData);
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
@@ -186,7 +186,7 @@ public class AdminService implements IAdmin {
         if (getMonth >= 1 && getMonth <= 12) {
             List<Result> resultsHighestScore = ResultService
                     .resultList.stream().sorted(Comparator.comparing(Result::getTotalPoint).reversed())
-                    .limit(2).toList();
+                    .limit(1).toList();
             List<Integer> listUserHigestScore = new ArrayList<>();
             for (Result result : resultsHighestScore){
                 listUserHigestScore.add(result.getUserId());
@@ -211,7 +211,7 @@ public class AdminService implements IAdmin {
         if (getMonth >= 1 && getMonth <= 12) {
             List<Result> resultsHighestScore = ResultService
                     .resultList.stream().sorted(Comparator.comparing(Result::getTotalPoint))
-                    .limit(2).toList();
+                    .limit(1).toList();
             List<Integer> listUserHigestScore = new ArrayList<>();
             for (Result result : resultsHighestScore){
                 listUserHigestScore.add(result.getUserId());

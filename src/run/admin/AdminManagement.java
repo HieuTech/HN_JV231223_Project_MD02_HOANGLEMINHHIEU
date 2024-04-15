@@ -20,9 +20,9 @@ public class AdminManagement {
     public void displayAdminManagement(IAdmin iAdmin) {
         while (true) {
             System.out.printf("Welcome To %-5s Admin Management Page \n", LoginMenu.user.getUserName());
-            System.out.println("1. Hiển thị danh sách toàn bộ user ");
-            System.out.println("2. Khóa / mở người dùng  ");
-            System.out.println("3. Tìm kiếm thông tin người dùng theo tên  ");
+            System.out.println("1. Display All User ");
+            System.out.println("2. Block/ UnBlock User  ");
+            System.out.println("3. Find User By Name  ");
             System.out.println("4. Quit");
             boolean isExit = false;
             byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);

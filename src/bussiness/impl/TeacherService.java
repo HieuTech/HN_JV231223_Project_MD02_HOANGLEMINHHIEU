@@ -91,7 +91,10 @@ public class TeacherService implements ITeacher {
             }
 
             result.displayData();
-            resultDetailList.forEach(ResultDetail::displayData);
+            resultDetail.displayData();
+//            for (ResultDetail resultDetail1: resultDetailList){
+//                resultDetail1.displayDataForTeacher(questions);
+//            }
             System.out.println("---------------TEST__EXAM__DONE---------------------");
         } else {
             System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
@@ -166,6 +169,7 @@ public class TeacherService implements ITeacher {
         String userName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_USERNAME, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setUserName(userName);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -174,6 +178,7 @@ public class TeacherService implements ITeacher {
         String lastName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setLastName(lastName);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -182,6 +187,7 @@ public class TeacherService implements ITeacher {
         String firstName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setFirstName(firstName);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -190,6 +196,7 @@ public class TeacherService implements ITeacher {
         String phoneNumber = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_PHONE, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setPhoneNumber(phoneNumber);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -198,11 +205,14 @@ public class TeacherService implements ITeacher {
         String address = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setPhoneNumber(address);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
     private void menuUpdateExam(int examId, Exam examUpdate) {
-        CatalogService.catalogList.stream().filter(catalog -> catalog.getExamId() == examId).forEach(Catalog::displayPerCatalog);
+        CatalogService.catalogList.stream().filter(catalog -> catalog.getCatalogId().equals(examUpdate.getCatalogId())).forEach(Catalog::displayPerCatalog);
+
+//        CatalogService.catalogList.stream().filter(catalog -> catalog.getExamId() == examId).forEach(Catalog::displayPerCatalog);
         System.out.println("-------------------------------------------------------------------");
         QuestionService.questionList.stream().filter(question -> question.getExamId() == examId).forEach(Question::displayData);
 
@@ -268,7 +278,7 @@ public class TeacherService implements ITeacher {
 
     private void editCatalog(int examId) {
         System.out.println("Input CatalogID you want to update");
-        String catalogId = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
+        String catalogId = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_CATALOG_ID, ErrorAndRegex.ERROR_VALUE);
 
         Catalog catalog = CatalogService.catalogList.stream().filter(catalog1 -> catalog1.getCatalogId().equals(catalogId)).findFirst().orElse(null);
 
@@ -277,6 +287,8 @@ public class TeacherService implements ITeacher {
             CatalogService.catalogList.set(CatalogService.catalogList.indexOf(catalog), catalog);
             System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
             IOFile.writeData(IOFile.CATALOG_PATH, CatalogService.catalogList);
+        }else{
+            System.out.println(ErrorAndRegex.ERROR_NOT_FOUND);
         }
     }
 
@@ -341,18 +353,18 @@ public class TeacherService implements ITeacher {
         Exam examDelete = findExamById(examId);
         if (examDelete != null) {
             //delete answer, write file
-            for (Question question : examDelete.getQuestionList()) {
-                for (Answer answer : question.getAnswerList()) {
-                    AnswerService.answerList.remove(answer);
-                    IOFile.writeData(IOFile.ANSWER_PATH, AnswerService.answerList);
-                }
-            }
+//            for (Question question : examDelete.getQuestionList()) {
+//                for (Answer answer : question.getAnswerList()) {
+//                    AnswerService.answerList.remove(answer);
+//                    IOFile.writeData(IOFile.ANSWER_PATH, AnswerService.answerList);
+//                }
+//            }
 
             //delete question, write file
-            for (Question question : examDelete.getQuestionList()) {
-                QuestionService.questionList.remove(question);
-                IOFile.writeData(IOFile.QUESTION_PATH, QuestionService.questionList);
-            }
+//            for (Question question : examDelete.getQuestionList()) {
+//                QuestionService.questionList.remove(question);
+//                IOFile.writeData(IOFile.QUESTION_PATH, QuestionService.questionList);
+//            }
             //delete exam, write file
 
             ExamService.examList.remove(examDelete);

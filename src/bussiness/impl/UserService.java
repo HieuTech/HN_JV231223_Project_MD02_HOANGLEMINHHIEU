@@ -188,7 +188,7 @@ public class UserService implements IUser {
         System.out.println("3. Address");
         System.out.println("4. First Name");
         System.out.println("5. Last Name");
-        System.out.println("5. Quit");
+        System.out.println("6. Quit");
         byte choice = QuizConFig.getByte(ErrorAndRegex.REGEX_NUMBER, ErrorAndRegex.ERROR_VALUE);
         switch (choice) {
             case 1:
@@ -222,6 +222,7 @@ public class UserService implements IUser {
         String userName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setUserName(userName);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -230,6 +231,7 @@ public class UserService implements IUser {
         String lastName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setLastName(lastName);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -238,6 +240,7 @@ public class UserService implements IUser {
         String firstName = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setFirstName(firstName);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -246,6 +249,7 @@ public class UserService implements IUser {
         String phoneNumber = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setPhoneNumber(phoneNumber);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
@@ -254,6 +258,7 @@ public class UserService implements IUser {
         String address = QuizConFig.inputFromUser(ErrorAndRegex.REGEX_STRING, ErrorAndRegex.ERROR_VALUE);
         LoginMenu.user.setPhoneNumber(address);
         UserService.userList.set(UserService.userList.indexOf(LoginMenu.user), LoginMenu.user);
+        IOFile.writeData(IOFile.USER_PATH, UserService.userList);
         System.out.println(ErrorAndRegex.NOTIFY_SUCCESS);
     }
 
